@@ -11,13 +11,13 @@
       <input class="nameInput" v-if="step.type === StepType.Exercise" :value="step.name" name="name" @change="handleUpdate($event)" />
     </div>
     <div class="buttons">
-      <button class="button" @click="handleClickOnMoveUpButton" :disabled="isFirst">
+      <button class="button" @click="handleClickOnMoveUpButton" :disabled="isFirst" aria-label="Move step upward">
         <icon width=24 height=24><icon-arrow-up /></icon>
       </button>
-      <button class="button" @click="handleClickOnMoveDownButton" :disabled="isLast">
+      <button class="button" @click="handleClickOnMoveDownButton" :disabled="isLast" aria-label="Move step downward">
         <icon width=24 height=24><icon-arrow-down /></icon>
       </button>
-      <button class="button" @click="handleStepDelete">
+      <button class="button" @click="handleStepDelete" aria-label="Delete step">
         <icon width=24 height=24><icon-trash /></icon>
       </button>
     </div>

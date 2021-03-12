@@ -17,25 +17,25 @@
         <rounded-button class="endButton" @click="handleClickOnStop">Okay!</rounded-button>
       </div>
       <div v-else>
-        <button class="bigPlayButton" @click="handleClickOnStartPause">
+        <button class="bigPlayButton" @click="handleClickOnStartPause" aria-label="Start">
           <icon width=24 height=24><icon-round-play /></icon>
           <div>Let's do it!</div>
         </button>
       </div>
     </div>
     <div class="block buttons" v-if="program.started">
-      <rounded-button @click="handleClickOnPrevious">
+      <rounded-button @click="handleClickOnPrevious" aria-label="Previous step">
         <icon width=24 height=24><icon-previous /></icon>
       </rounded-button>
-      <rounded-button @click="handleClickOnStartPause">
+      <rounded-button @click="handleClickOnStartPause" :aria-label="program.running ? 'Pause' : 'Start'">
         <icon width=24 height=24 v-if="program.running"><icon-pause /></icon>
         <icon width=24 height=24 v-else><icon-play /></icon>
       </rounded-button>
-      <rounded-button @click="handleClickOnNext">
+      <rounded-button @click="handleClickOnNext" aria-label="Next step">
         <icon width=24 height=24><icon-next /></icon>
       </rounded-button>
     </div>
-    <rounded-button class="stopButton" @click="handleClickOnStop" v-if="program.started && !program.running">
+    <rounded-button class="stopButton" @click="handleClickOnStop" v-if="program.started && !program.running" aria-label="Stop workout">
       <icon width=24 height=24><icon-stop /></icon>
       <span>Stop</span>
     </rounded-button>

@@ -1,7 +1,7 @@
 <template>
   <main :class="{ isFull: !isBuilderVisible }">
     <program-runner :workout="workout" />
-    <button class="toggleButton" @click="toggleBuilder" v-if="!isBuilderVisible">
+    <button class="toggleButton" @click="toggleBuilder" v-if="!isBuilderVisible" aria-label="Open program">
       <icon width=32 height=32><icon-dumbbell /></icon>
     </button>
   </main>
@@ -13,7 +13,7 @@
       @delete-step="deleteStep"
       @move-step="moveStep"
     />
-    <button class="toggleButton" @click="toggleBuilder" v-if="isBuilderVisible">
+    <button class="toggleButton" @click="toggleBuilder" v-if="isBuilderVisible" aria-label="Close program">
       <icon width=32 height=32><icon-close /></icon>
     </button>
   </aside>
