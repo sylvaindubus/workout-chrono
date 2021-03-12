@@ -1,21 +1,25 @@
+html {
+  height: 100%;
+}
 body {
-	min-width: 320px;
-	margin: 0;
-	line-height: 1.15;
-	font-size: 16px;
-	font-family: Nunito, Helvetica, Arial, sans-serif;
-	-webkit-text-size-adjust: 100%;
-	-webkit-font-smoothing: smooth;
-	-moz-osx-font-smoothing: grayscale;
+  min-width: 320px;
+  height: 100%;
+  margin: 0;
+  line-height: 1.15;
+  font-size: 16px;
+  font-family: Nunito, Helvetica, Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: smooth;
+  -moz-osx-font-smoothing: grayscale;
 }
 * {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 *:focus {
-	outline: none;
+  outline: none;
 }
 #app {
-	color: #2c3e50;
-	display: flex;
-	height: 100vh;
+  color: #2c3e50;
+  display: flex;
+  height: 100%;
 }

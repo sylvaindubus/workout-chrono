@@ -122,7 +122,7 @@ export default defineComponent({
     right: 0;
     width: 420px;
     max-width: 100vw;
-    height: 100vh;
+    height: 100%;
     transform: translateX(100%);
     transition: transform .4s;
 
