@@ -48,7 +48,6 @@ class Program {
   }
 
   start () {
-    console.log('Program - Start')
     this.started = true
     this.running = true
     this.index = 0
@@ -56,25 +55,21 @@ class Program {
   }
 
   stop () {
-    console.log('Program - Stop')
     this.reset()
     this.done = false
   }
 
   play () {
-    console.log('Program - Play')
     if (!this.started) return
     this.running = true
   }
 
   pause () {
-    console.log('Program - Pause')
     if (!this.started) return
     this.running = false
   }
 
   nextStep () {
-    console.log('Program - Next step')
     if (!this.started) return
     if (this.timers[this.index + 1]) {
       this.index++
@@ -86,7 +81,6 @@ class Program {
   }
 
   previousStep () {
-    console.log('Program - Previous step')
     if (!this.started) return
     if (this.timers[this.index - 1]) {
       this.index--

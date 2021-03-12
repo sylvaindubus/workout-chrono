@@ -1,4 +1,4 @@
-# workout
+# workout-chrono
 
 ## Project setup
 ```

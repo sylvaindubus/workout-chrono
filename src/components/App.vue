@@ -123,12 +123,8 @@ export default defineComponent({
     width: 420px;
     max-width: 100vw;
     height: 100vh;
-    transform: translateX(320px);
+    transform: translateX(100%);
     transition: transform .4s;
-
-    @media (min-width: 768px) {
-      transform: translateX(420px);
-    }
 
     &.isVisible {
       transform: translateX(0px);
