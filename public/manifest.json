@@ -1,0 +1,28 @@
+{
+  "name": "Workout Chrono",
+  "short_name": "Workout Chrono",
+  "description": "The simplest app ever to time your own workout!",
+  "theme_color": "#4b6584",
+  "background_color": "#4b6584",
+  "display": "standalone",
+  "lang": "en-GB",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
