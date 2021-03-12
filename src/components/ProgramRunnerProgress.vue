@@ -41,13 +41,14 @@ export default defineComponent({
     bottom: 0;
     left: 0;
     right: 0;
+    overflow-y: hidden;
   }
   ul {
     display: flex;
     align-items: flex-end;
   }
   li {
-    min-width: 10px;
+    min-width: 3px;
     height: 6px;
     transition: height .75s ease;
 
