@@ -23,3 +23,9 @@ body {
   display: flex;
   height: 100%;
 }
+
+@keyframes shineBackground {
+  50% {
+    background-color: #fff;
+  }
+}

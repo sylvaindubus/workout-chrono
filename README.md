@@ -6,8 +6,9 @@ The app is currently living [here](https://workout-chrono.vercel.app/).
 
 ## 🗺 Road-map
 
+* ~~Improve program state~~
 * Find a better name
-* Improve icon management and program state
+* Improve icon management
 * Add a preview of the next step before time's up
 * Add some sounds during the last 5 seconds of a step
 * Make things a bit prettier, add smooth animations and a cool mascot

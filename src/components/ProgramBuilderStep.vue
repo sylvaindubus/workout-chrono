@@ -8,7 +8,7 @@
         <input type="number" class="timeInput" min="0" max="60" step="1" :value="minutes" name="minutes" @change="handleUpdate($event)" /> :
         <input type="number" class="timeInput" min="0" max="60" step="5" :value="seconds" name="seconds" @change="handleUpdate($event)" />
       </div>
-      <input class="nameInput" v-if="step.type === StepType.Exercise" :value="step.name" name="name" @change="handleUpdate($event)" />
+      <input class="nameInput" v-if="step.type === StepType.Exercise" :value="step.name" name="stepName" @change="handleUpdate($event)" />
     </div>
     <div class="buttons">
       <button class="button" @click="handleClickOnMoveUpButton" :disabled="isFirst" aria-label="Move step upward">
@@ -80,6 +80,9 @@ export default defineComponent({
           break
         case 'type':
           this.$emit('update', this.step.id, { [name]: value })
+          break
+        case 'stepName':
+          this.$emit('update', this.step.id, { name: value })
           break
         default:
           this.$emit('update', this.step.id, { [name]: value })

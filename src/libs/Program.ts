@@ -1,18 +1,25 @@
 import { OnChange } from 'property-watch-decorator'
 
 import Step from '../types/step.d'
+import ProgramState from '../types/programState'
 
 type Timer = {
   duration: number;
   decrement: boolean;
 }
 
+type UpdateHandlers = {
+  onStateUpdate: Function;
+  onTimeUpdate: Function;
+  onStepIndexUpdate: Function;
+}
+
 class Program {
   private prevTimestamp = 0
-  public started = false
-  public running = false
-  public done = false
   public elapsedTime = 0
+
+  @OnChange('handleStateChange')
+  private state = ProgramState.Stopped
 
   @OnChange('handleTimeChange')
   private time = 0
@@ -20,9 +27,17 @@ class Program {
   @OnChange('handleIndexChange')
   private index = -1
 
-  public timers: Array<Timer> = []
+  private onStateUpdate: Function
+  private onTimeUpdate: Function
+  private onStepIndexUpdate: Function
 
-  constructor (steps: Array<Step>, private onTimeUpdate: Function, private onStepIndexUpdate: Function) {
+  private timers: Array<Timer> = []
+
+  constructor (steps: Array<Step>, updateHandlers: UpdateHandlers) {
+    this.onStateUpdate = updateHandlers.onStateUpdate
+    this.onTimeUpdate = updateHandlers.onTimeUpdate
+    this.onStepIndexUpdate = updateHandlers.onStepIndexUpdate
+
     this.timers = steps.map(step => ({
       duration: step.duration * 1000,
       decrement: step.duration > 0
@@ -41,6 +56,12 @@ class Program {
     }
   }
 
+  handleStateChange (value: number) {
+    if (this.onStateUpdate) {
+      this.onStateUpdate(value)
+    }
+  }
+
   handleIndexChange (value: number) {
     if (this.onStepIndexUpdate) {
       this.onStepIndexUpdate(value)
@@ -48,40 +69,39 @@ class Program {
   }
 
   start () {
-    this.started = true
-    this.running = true
+    this.state = ProgramState.Running
     this.index = 0
     this.elapsedTime = 0
   }
 
   stop () {
     this.reset()
-    this.done = false
+    this.state = ProgramState.Stopped
   }
 
   play () {
-    if (!this.started) return
-    this.running = true
+    if (this.state === ProgramState.Stopped || this.state === ProgramState.Finished) return
+    this.state = ProgramState.Running
   }
 
   pause () {
-    if (!this.started) return
-    this.running = false
+    if (this.state === ProgramState.Stopped || this.state === ProgramState.Finished) return
+    this.state = ProgramState.Paused
   }
 
   nextStep () {
-    if (!this.started) return
+    if (this.state === ProgramState.Stopped || this.state === ProgramState.Finished) return
     if (this.timers[this.index + 1]) {
       this.index++
       this.time = this.timers[this.index]?.duration || 0
     } else {
       this.reset()
-      this.done = true
+      this.state = ProgramState.Finished
     }
   }
 
   previousStep () {
-    if (!this.started) return
+    if (this.state === ProgramState.Stopped || this.state === ProgramState.Finished) return
     if (this.timers[this.index - 1]) {
       this.index--
       this.time = this.timers[this.index]?.duration || 0
@@ -89,8 +109,6 @@ class Program {
   }
 
   private reset () {
-    this.started = false
-    this.running = false
     this.time = this.timers[0]?.duration || 0
     this.index = -1
   }
@@ -108,7 +126,7 @@ class Program {
   }
 
   private updateTime (interval: number) {
-    if (!this.running) {
+    if (this.state !== ProgramState.Running) {
       return
     }
 

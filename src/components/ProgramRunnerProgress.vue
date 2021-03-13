@@ -21,13 +21,25 @@ export default defineComponent({
     steps: { type: Array as () => Array<Step>, required: true },
     currentStep: { type: Object as () => Step }
   },
-  computed: {
-    totalDuration (): number {
-      return this.steps.reduce((prev: number, curr: Step) => prev + curr.duration, 0)
+  data () {
+    return {
+      totalDuration: 0
+    }
+  },
+  watch: {
+    steps: {
+      handler: function (steps: Array<Step>) {
+        this.totalDuration = steps.reduce((prev: number, curr: Step) => {
+          return curr.duration > 0 ? prev + curr.duration : prev + 60
+        }, 0)
+      },
+      immediate: true,
+      deep: true
     }
   },
   methods: {
     getElementStyle (duration: number) {
+      if (duration === 0) duration = 60
       const width = `${duration * 100 / this.totalDuration}%`
       return { width }
     }
@@ -49,12 +61,7 @@ export default defineComponent({
   }
   li {
     min-width: 3px;
-    height: 6px;
-    transition: height .75s ease;
-
-    &.current {
-      height: 12px;
-    }
+    height: 12px;
 
     &.warmupColor {
       background-color: #f7b731;
@@ -70,6 +77,10 @@ export default defineComponent({
 
     &.stretchingColor {
       background-color: #20bf6b;
+    }
+
+    &.current {
+      animation: shineBackground 2s infinite;
     }
   }
 </style>

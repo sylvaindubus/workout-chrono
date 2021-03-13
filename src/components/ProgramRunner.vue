@@ -6,11 +6,11 @@
     @keyup.space="handleClickOnStartPause"
     tabindex="0">
     <div class="block main">
-      <div v-if="program.started">
+      <div v-if="programState === ProgramState.Running || programState === ProgramState.Paused">
         <p class="title">{{ title }}</p>
         <program-runner-timer :time="time" />
       </div>
-      <div v-else-if="program.done">
+      <div v-else-if="programState === ProgramState.Finished">
         <p class="title">Well done!</p>
         <p class="title">You did it in:</p>
         <program-runner-timer :time="program.elapsedTime" />
@@ -23,19 +23,19 @@
         </button>
       </div>
     </div>
-    <div class="block buttons" v-if="program.started">
+    <div class="block buttons" v-if="programState === ProgramState.Running || programState === ProgramState.Paused">
       <rounded-button @click="handleClickOnPrevious" aria-label="Previous step">
         <icon width=24 height=24><icon-previous /></icon>
       </rounded-button>
-      <rounded-button @click="handleClickOnStartPause" :aria-label="program.running ? 'Pause' : 'Start'">
-        <icon width=24 height=24 v-if="program.running"><icon-pause /></icon>
+      <rounded-button @click="handleClickOnStartPause" :aria-label="programState === ProgramState.Running ? 'Pause' : 'Start'">
+        <icon width=24 height=24 v-if="programState === ProgramState.Running"><icon-pause /></icon>
         <icon width=24 height=24 v-else><icon-play /></icon>
       </rounded-button>
       <rounded-button @click="handleClickOnNext" aria-label="Next step">
         <icon width=24 height=24><icon-next /></icon>
       </rounded-button>
     </div>
-    <rounded-button class="stopButton" @click="handleClickOnStop" v-if="program.started && !program.running" aria-label="Stop workout">
+    <rounded-button class="stopButton" @click="handleClickOnStop" v-if="programState === ProgramState.Paused" aria-label="Stop workout">
       <icon width=24 height=24><icon-stop /></icon>
       <span>Stop</span>
     </rounded-button>
@@ -47,6 +47,7 @@
 import { defineComponent } from 'vue'
 import Workout from '../types/workout.d'
 import Step from '../types/step.d'
+import ProgramState from '../types/programState'
 import Program from '../libs/Program'
 import ProgramRunnerTimer from './ProgramRunnerTimer.vue'
 import ProgramRunnerProgress from './ProgramRunnerProgress.vue'
@@ -58,6 +59,8 @@ import IconNext from './icons/IconNext.vue'
 import IconPlay from './icons/IconPlay.vue'
 import IconPause from './icons/IconPause.vue'
 import IconStop from './icons/IconStop.vue'
+
+let wakeLock: WakeLockSentinel | null
 
 export default defineComponent({
   name: 'ProgramRunner',
@@ -77,12 +80,18 @@ export default defineComponent({
     workout!: { type: Object as () => Workout, required: true }
   },
   data () {
-    const program = new Program(this.workout.steps, this.handleTimeUpdate, this.handleStepIndexUpdate)
+    const program = new Program(this.workout.steps, {
+      onStateUpdate: this.handleStateUpdate,
+      onTimeUpdate: this.handleTimeUpdate,
+      onStepIndexUpdate: this.handleStepIndexUpdate
+    })
+
     return {
       time: 0,
       stepIndex: -1,
       program: program,
-      done: false
+      programState: ProgramState.Stopped,
+      ProgramState: ProgramState
     }
   },
   watch: {
@@ -90,7 +99,11 @@ export default defineComponent({
       handler: function (newWorkout: Workout) {
         this.program.stop()
         // Replace the current program with a new one, using new steps
-        this.program = new Program(newWorkout.steps, this.handleTimeUpdate, this.handleStepIndexUpdate)
+        this.program = new Program(newWorkout.steps, {
+          onStateUpdate: this.handleStateUpdate,
+          onTimeUpdate: this.handleTimeUpdate,
+          onStepIndexUpdate: this.handleStepIndexUpdate
+        })
       },
       deep: true
     }
@@ -114,9 +127,6 @@ export default defineComponent({
     },
     currentStep (): Step | null {
       return this.workout.steps[this.stepIndex]
-    },
-    isRunning (): boolean {
-      return this.program.running
     }
   },
   methods: {
@@ -126,13 +136,19 @@ export default defineComponent({
     handleStepIndexUpdate (index: number) {
       this.stepIndex = index
     },
-    handleCompletionChange (done: boolean) {
-      this.done = done
+    handleStateUpdate (state: ProgramState) {
+      this.programState = state
+
+      if (state === ProgramState.Running && !wakeLock) {
+        this.requestWakeLock()
+      } else if ((state === ProgramState.Stopped || state === ProgramState.Finished) && wakeLock) {
+        this.releaseWakeLock()
+      }
     },
     handleClickOnStartPause () {
-      if (this.program.running) {
+      if (this.programState === ProgramState.Running) {
         this.program.pause()
-      } else if (this.program.started) {
+      } else if (this.programState === ProgramState.Paused) {
         this.program.play()
       } else {
         this.program.start()
@@ -146,6 +162,14 @@ export default defineComponent({
     },
     handleClickOnNext () {
       this.program.nextStep()
+    },
+    async requestWakeLock () {
+      wakeLock = await navigator.wakeLock.request('screen')
+    },
+    async releaseWakeLock () {
+      if (!wakeLock) return
+      wakeLock.release()
+      wakeLock = null
     }
   }
 })
