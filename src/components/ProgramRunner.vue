@@ -9,6 +9,7 @@
       <div v-if="programState === ProgramState.Running || programState === ProgramState.Paused">
         <p class="title">{{ title }}</p>
         <program-runner-timer :time="time" />
+        <program-runner-next-step :step="nextStep" :isVisible="isNextStepVisible" />
       </div>
       <div v-else-if="programState === ProgramState.Finished">
         <p class="title">Well done!</p>
@@ -51,6 +52,7 @@ import ProgramState from '../types/programState'
 import Program from '../libs/Program'
 import ProgramRunnerTimer from './ProgramRunnerTimer.vue'
 import ProgramRunnerProgress from './ProgramRunnerProgress.vue'
+import ProgramRunnerNextStep from './ProgramRunnerNextStep.vue'
 import RoundedButton from './RoundedButton.vue'
 import Icon from './icons/Icon.vue'
 import IconRoundPlay from './icons/IconRoundPlay.vue'
@@ -59,6 +61,7 @@ import IconNext from './icons/IconNext.vue'
 import IconPlay from './icons/IconPlay.vue'
 import IconPause from './icons/IconPause.vue'
 import IconStop from './icons/IconStop.vue'
+import StepType from '@/types/stepType'
 
 let wakeLock: WakeLockSentinel | null
 
@@ -67,6 +70,7 @@ export default defineComponent({
   components: {
     ProgramRunnerTimer,
     ProgramRunnerProgress,
+    ProgramRunnerNextStep,
     RoundedButton,
     Icon,
     IconRoundPlay,
@@ -126,7 +130,21 @@ export default defineComponent({
       }
     },
     currentStep (): Step | null {
-      return this.workout.steps[this.stepIndex]
+      return this.workout.steps[this.stepIndex] || null
+    },
+    nextStep (): Step | null {
+      return this.workout.steps[this.stepIndex + 1] || null
+    },
+    isNextStepVisible (): boolean {
+      // The next step should be visible if this is a exercise step
+      // and if the current step is almost done (less than 10 seconds left)
+      return (
+        this.nextStep !== null &&
+        this.nextStep.type === StepType.Exercise &&
+        this.currentStep !== null &&
+        this.currentStep.duration > 0 &&
+        this.time < 10000
+      )
     }
   },
   methods: {
