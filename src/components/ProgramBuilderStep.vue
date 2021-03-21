@@ -17,6 +17,9 @@
       <button class="button" @click="handleClickOnMoveDownButton" :disabled="isLast" aria-label="Move step downward">
         <icon width=24 height=24><icon-arrow-down /></icon>
       </button>
+      <button class="button" @click="handleStepClone" aria-label="Clone step">
+        <icon width=24 height=24><icon-copy /></icon>
+      </button>
       <button class="button" @click="handleStepDelete" aria-label="Delete step">
         <icon width=24 height=24><icon-trash /></icon>
       </button>
@@ -30,6 +33,7 @@ import StepType from '../types/stepType'
 import { formatMinutes, formatSeconds } from '../helpers/formatters'
 import Icon from './icons/Icon.vue'
 import IconTrash from './icons/IconTrash.vue'
+import IconCopy from './icons/IconCopy.vue'
 import IconArrowUp from './icons/IconArrowUp.vue'
 import IconArrowDown from './icons/IconArrowDown.vue'
 
@@ -38,6 +42,7 @@ export default defineComponent({
   components: {
     Icon,
     IconTrash,
+    IconCopy,
     IconArrowUp,
     IconArrowDown
   },
@@ -87,6 +92,9 @@ export default defineComponent({
         default:
           this.$emit('update', this.step.id, { [name]: value })
       }
+    },
+    handleStepClone () {
+      this.$emit('clone', this.step.id)
     },
     handleStepDelete () {
       this.$emit('delete', this.step.id)

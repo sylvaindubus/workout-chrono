@@ -15,6 +15,7 @@
           :isFirst="index === 0"
           :isLast="index === workout.steps.length - 1"
           @update="handleStepUpdate"
+          @clone="handleStepClone"
           @delete="handleStepDelete"
           @up="handleStepUp"
           @down="handleStepDown"
@@ -56,6 +57,11 @@ export default defineComponent({
         ...this.workout.steps[index],
         ...data
       })
+    },
+    handleStepClone (id: string) {
+      const index = this.workout.steps.findIndex(step => step.id === id)
+      if (index === -1) return
+      this.$emit('clone-step', index)
     },
     handleStepDelete (id: string) {
       const index = this.workout.steps.findIndex(step => step.id === id)

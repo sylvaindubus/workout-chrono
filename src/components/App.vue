@@ -10,6 +10,7 @@
       :workout="workout"
       @add-step="addStep"
       @update-step="updateStep"
+      @clone-step="cloneStep"
       @delete-step="deleteStep"
       @move-step="moveStep"
     />
@@ -72,6 +73,13 @@ export default defineComponent({
     updateStep (index: number, step: Step) {
       this.workout.steps[index] = step
     },
+    cloneStep (index: number) {
+      const clone = {
+        ...this.workout.steps[index],
+        id: generateId()
+      }
+      this.workout.steps.splice(index, 0, clone)
+    },
     deleteStep (index: number) {
       this.workout.steps.splice(index, 1)
     },
@@ -110,7 +118,7 @@ export default defineComponent({
     transition: width .4s;
 
     @media (min-width: 768px) {
-      width: calc(100% - 420px);
+      width: calc(100% - 450px);
     }
 
     &.isFull {
@@ -120,7 +128,7 @@ export default defineComponent({
   aside {
     position: fixed;
     right: 0;
-    width: 420px;
+    width: 450px;
     max-width: 100vw;
     height: 100%;
     transform: translateX(100%);
