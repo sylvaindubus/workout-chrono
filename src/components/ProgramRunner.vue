@@ -137,13 +137,14 @@ export default defineComponent({
     },
     isNextStepVisible (): boolean {
       // The next step should be visible if this is a exercise step
-      // and if the current step is almost done (less than 10 seconds left)
+      // and if the current step is almost done (less than 20 seconds left)
       return (
         this.nextStep !== null &&
         this.nextStep.type === StepType.Exercise &&
-        this.currentStep !== null &&
-        this.currentStep.duration > 0 &&
-        this.time < 10000
+        this.currentStep !== null && (
+          (this.currentStep.duration > 0 && this.time < 20000) ||
+          this.currentStep.duration === 0
+        )
       )
     }
   },
