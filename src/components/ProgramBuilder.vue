@@ -1,6 +1,5 @@
 <template>
   <section class="programBuilder">
-    <p class="title">Your workout</p>
     <ul class="list">
       <li v-for="(step, index) of workout.steps" :key="step.id">
         <div
@@ -25,7 +24,10 @@
       </li>
     </ul>
     <footer class="footer">
-      <rounded-button class="addButton" @click="handleClickOnAddButton">Add one more</rounded-button>
+      <rounded-button class="addButton" @click="handleClickOnAddButton">
+        <icon width=24 height=24 class="iconBeforeLabel"><icon-add-circle /></icon>
+        <span>Add one more</span>
+      </rounded-button>
     </footer>
   </section>
 </template>
@@ -36,12 +38,16 @@ import { defineComponent } from 'vue'
 import Workout from '../types/workout.d'
 import ProgramBuilderStep from './ProgramBuilderStep.vue'
 import RoundedButton from './RoundedButton.vue'
+import Icon from './icons/Icon.vue'
+import IconAddCircle from './icons/IconAddCircle.vue'
 
 export default defineComponent({
   name: 'ProgramBuilder',
   components: {
     ProgramBuilderStep,
-    RoundedButton
+    RoundedButton,
+    Icon,
+    IconAddCircle
   },
   props: {
     workout!: { type: Object as () => Workout, required: true }
@@ -111,13 +117,6 @@ export default defineComponent({
 </script>
 
 <style lang="postcss" scoped>
-  .programBuilder {
-    height: 100%;
-    padding: 18px;
-    background-color: #d1d8e0;
-    border-left: 6px solid #a5b1c2;
-    overflow-y: auto;
-  }
   .title {
     margin: 12px 0;
     font-size: 2rem;
@@ -137,5 +136,8 @@ export default defineComponent({
   }
   .addButton {
     width: 100%;
+  }
+  .iconBeforeLabel {
+    margin-right: 6px;
   }
 </style>

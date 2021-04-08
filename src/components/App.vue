@@ -1,11 +1,19 @@
 <template>
-  <main :class="{ isFull: !isBuilderVisible }">
+  <main :class="{ isFull: !isAsideVisible }">
     <program-runner :workout="workout" />
-    <button class="toggleButton" @click="toggleBuilder" v-if="!isBuilderVisible" aria-label="Open program">
-      <icon width=32 height=32><icon-dumbbell /></icon>
+    <button class="toggleButton" @click="toggleAside" v-if="!isAsideVisible" aria-label="Open aside">
+      <icon width=28 height=28><icon-dumbbell /></icon>
     </button>
   </main>
-  <aside :class="{ isVisible: isBuilderVisible }">
+  <aside :class="{ isVisible: isAsideVisible }">
+    <workout-manager
+      :workout="workout"
+      :workouts="workouts"
+      @create-workout="createWorkout"
+      @rename-workout="renameWorkout"
+      @select-workout="selectWorkout"
+      @delete-workout="deleteWorkout"
+    />
     <program-builder
       :workout="workout"
       @add-step="addStep"
@@ -14,8 +22,8 @@
       @delete-step="deleteStep"
       @move-step="moveStep"
     />
-    <button class="toggleButton" @click="toggleBuilder" v-if="isBuilderVisible" aria-label="Close program">
-      <icon width=32 height=32><icon-close /></icon>
+    <button class="toggleButton" @click="toggleAside" v-if="isAsideVisible" aria-label="Close aside">
+      <icon width=28 height=28><icon-close /></icon>
     </button>
   </aside>
 </template>
@@ -24,6 +32,7 @@
 import { defineComponent } from 'vue'
 import ProgramBuilder from './ProgramBuilder.vue'
 import ProgramRunner from './ProgramRunner.vue'
+import WorkoutManager from './WorkoutManager.vue'
 import Icon from './icons/Icon.vue'
 import IconDumbbell from './icons/IconDumbbell.vue'
 import IconClose from './icons/IconClose.vue'
@@ -39,16 +48,122 @@ export default defineComponent({
   components: {
     ProgramBuilder,
     ProgramRunner,
+    WorkoutManager,
     Icon,
     IconDumbbell,
     IconClose
   },
   data () {
-    let workout: Workout
-    if (localStorage.getItem('workout')) {
-      workout = JSON.parse(localStorage.getItem('workout') || '')
-    } else {
-      workout = {
+    // Temporary code to adapt from previous way of storing data
+    if (localStorage.getItem('workout') && !localStorage.getItem('workouts')) {
+      const workout = JSON.parse(localStorage.getItem('workout') || '{}')
+      workout.id = generateId()
+      localStorage.setItem('workouts', JSON.stringify([workout]))
+      localStorage.removeItem('workout')
+    }
+
+    let workouts = this.loadWorkouts()
+    if (!workouts) {
+      workouts = [this.getNewWorkout()]
+    }
+
+    return {
+      workouts,
+      selectedId: workouts[0].id,
+      isAsideVisible: false
+    }
+  },
+  methods: {
+    createWorkout () {
+      const workout = this.getNewWorkout()
+      this.workouts.push(workout)
+      this.selectedId = workout.id
+    },
+    renameWorkout (name: string) {
+      const workout = this.fetchWorkoutInList(this.selectedId)
+      if (!workout) return
+
+      workout.name = name !== '' ? name : 'Unnamed workout'
+      this.updateWorkoutInList(workout)
+    },
+    selectWorkout (id: string) {
+      this.selectedId = id
+    },
+    deleteWorkout () {
+      const workout = this.fetchWorkoutInList(this.selectedId)
+      if (!workout) return
+
+      this.removeWorkoutInList(workout)
+      this.selectedId = this.workouts[0].id
+    },
+    addStep () {
+      const workout = this.fetchWorkoutInList(this.selectedId)
+      if (!workout) return
+
+      workout.steps.push({ id: generateId(), type: StepType.Exercise, name: '', duration: 40 })
+      this.updateWorkoutInList(workout)
+    },
+    updateStep (index: number, step: Step) {
+      const workout = this.fetchWorkoutInList(this.selectedId)
+      if (!workout) return
+
+      workout.steps[index] = step
+      this.updateWorkoutInList(workout)
+    },
+    cloneStep (index: number) {
+      const workout = this.fetchWorkoutInList(this.selectedId)
+      if (!workout) return
+
+      const clone = {
+        ...workout.steps[index],
+        id: generateId()
+      }
+      workout.steps.splice(index, 0, clone)
+      this.updateWorkoutInList(workout)
+    },
+    deleteStep (index: number) {
+      const workout = this.fetchWorkoutInList(this.selectedId)
+      if (!workout) return
+
+      workout.steps.splice(index, 1)
+      this.updateWorkoutInList(workout)
+    },
+    moveStep (index: number, newIndex: number) {
+      const workout = this.fetchWorkoutInList(this.selectedId)
+      if (!workout) return
+
+      const step = workout.steps.splice(index, 1)[0]
+      workout.steps.splice(newIndex, 0, step)
+      this.updateWorkoutInList(workout)
+    },
+    saveWorkouts () {
+      localStorage.setItem('workouts', JSON.stringify(this.workouts))
+    },
+    loadWorkouts (): Workout[] | null {
+      if (!localStorage.getItem('workouts')) {
+        return null
+      }
+      return JSON.parse(localStorage.getItem('workouts') || '[]')
+    },
+    toggleAside () {
+      this.isAsideVisible = !this.isAsideVisible
+    },
+    fetchWorkoutInList (id: string): Workout | undefined {
+      return this.workouts.find((w: Workout) => w.id === id)
+    },
+    updateWorkoutInList (workout: Workout) {
+      this.workouts = this.workouts.map((w: Workout) => {
+        if (w.id !== workout.id) return w
+        workout.updatedAt = new Date()
+        return workout
+      })
+    },
+    removeWorkoutInList (workout: Workout) {
+      this.workouts = this.workouts.filter((w: Workout) => w.id !== workout.id)
+    },
+    getNewWorkout (): Workout {
+      return {
+        id: generateId(),
         name: 'My workout',
         steps: [
           { id: generateId(), type: StepType.WarmUp, duration: 40 },
@@ -60,50 +175,19 @@ export default defineComponent({
         updatedAt: new Date()
       }
     }
-
-    return {
-      workout,
-      isBuilderVisible: false
-    }
   },
-  methods: {
-    addStep () {
-      this.workout.steps.push({ id: generateId(), type: StepType.Exercise, name: '', duration: 40 })
-    },
-    updateStep (index: number, step: Step) {
-      this.workout.steps[index] = step
-    },
-    cloneStep (index: number) {
-      const clone = {
-        ...this.workout.steps[index],
-        id: generateId()
-      }
-      this.workout.steps.splice(index, 0, clone)
-    },
-    deleteStep (index: number) {
-      this.workout.steps.splice(index, 1)
-    },
-    moveStep (index: number, newIndex: number) {
-      const step = this.workout.steps.splice(index, 1)[0]
-      this.workout.steps.splice(newIndex, 0, step)
-    },
-    saveWorkout (workout: Workout) {
-      localStorage.setItem('workout', JSON.stringify({
-        ...workout,
-        updatedAt: new Date()
-      }))
-    },
-    toggleBuilder () {
-      this.isBuilderVisible = !this.isBuilderVisible
+  computed: {
+    workout (): Workout | undefined {
+      return this.fetchWorkoutInList(this.selectedId)
     }
   },
   watch: {
-    workout: {
-      handler: function (newWorkout: Workout) {
+    workouts: {
+      handler: function () {
         // Clear the previous timeout (if any)
         clearTimeout(saveTimeout)
         // Save the workout after some seconds without changes
-        saveTimeout = setTimeout(this.saveWorkout.bind(this, newWorkout), 2000)
+        saveTimeout = setTimeout(this.saveWorkouts, 2000)
       },
       deep: true
     }
@@ -131,8 +215,17 @@ export default defineComponent({
     width: 450px;
     max-width: 100vw;
     height: 100%;
+    overflow-y: auto;
+    background-color: #d1d8e0;
+    border-left: 6px solid #a5b1c2;
+    padding: 18px;
+    padding-top: 88px;
     transform: translateX(100%);
     transition: transform .4s;
+
+    @media (min-width: 425px) {
+      padding-top: 18px;
+    }
 
     &.isVisible {
       transform: translateX(0px);
@@ -142,8 +235,11 @@ export default defineComponent({
     position: absolute;
     right: 18px;
     top: 18px;
-    width: 54px;
-    height: 54px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: none;
     color: #fff;
     border-radius: 50%;
