@@ -2,7 +2,7 @@
   <section class="workoutManager">
     <!-- <label class="label">Current workout</label> -->
     <div class="title" v-if="!isRenaming" @click=toggleSelect>
-      <button class="switchButton">
+      <button class="switchButton" aria-label="Select another workout">
         <icon width=32 height=32><icon-caret-down /></icon>
       </button>
       <span>{{name}}</span>

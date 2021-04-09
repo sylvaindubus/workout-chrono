@@ -1,14 +1,22 @@
 <template>
   <section :class="classes">
     <div>
-      <select class="typeSelect" :value="step.type" name="type" @change="handleUpdate($event)">
-        <option v-for="type of stepTypes" :value="type.value" :key="type.value">{{ type.label }}</option>
-      </select>
+      <label aria-label="Type">
+        <select class="typeSelect" :value="step.type" name="type" @change="handleUpdate($event)">
+          <option v-for="type of stepTypes" :value="type.value" :key="type.value">{{ type.label }}</option>
+        </select>
+      </label>
       <div>
-        <input type="number" class="timeInput" min="0" max="60" step="1" :value="minutes" name="minutes" @change="handleUpdate($event)" /> :
-        <input type="number" class="timeInput" min="0" max="60" step="5" :value="seconds" name="seconds" @change="handleUpdate($event)" />
+        <label aria-label="Minutes">
+          <input type="number" class="timeInput" min="0" max="60" step="1" :value="minutes" name="minutes" @change="handleUpdate($event)" /> :
+        </label>
+        <label aria-label="Seconds">
+          <input type="number" class="timeInput" min="0" max="60" step="5" :value="seconds" name="seconds" @change="handleUpdate($event)" />
+        </label>
       </div>
-      <input class="nameInput" v-if="step.type === StepType.Exercise" :value="step.name" name="stepName" @change="handleUpdate($event)" />
+      <label v-if="step.type === StepType.Exercise" aria-label="Name">
+        <input class="nameInput" :value="step.name" name="stepName" @change="handleUpdate($event)" />
+      </label>
     </div>
     <div class="buttons">
       <button class="button" @click="handleClickOnMoveUpButton" :disabled="isFirst" aria-label="Move step upward">

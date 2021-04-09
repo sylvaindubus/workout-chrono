@@ -14,7 +14,7 @@ module.exports = {
       maskIcon: 'safari-pinned-tab.svg',
       msTileImage: 'mstile-150x150.png'
     },
-    themeColor: '4b6584',
+    themeColor: '#4b6584',
     msTileColor: '#4b6584'
   }
 }
