@@ -9,7 +9,7 @@ The app is currently living [here](https://workout-chrono.vercel.app/).
 * ~~Improve program state~~
 * Find a better name
 * Improve icon management
-* Add a preview of the next step before time's up
+* ~~Add a preview of the next step before time's up~~
 * Add some sounds during the last 5 seconds of a step
 * Make things a bit prettier, add smooth animations and a cool mascot
 * Add a presentation screen
@@ -20,7 +20,7 @@ The app is currently living [here](https://workout-chrono.vercel.app/).
 ## 💡 Future ideas
 
 * Support different languages
-* Support multiple workouts
+* ~~Support multiple workouts~~
 * Add another step type, like "Other", using a purple color
 
 ## 🛠 Project setup
