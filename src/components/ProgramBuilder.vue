@@ -36,6 +36,7 @@
 
 import { defineComponent } from 'vue'
 import Workout from '../types/workout.d'
+import Step from '../types/step.d'
 import ProgramBuilderStep from './ProgramBuilderStep.vue'
 import RoundedButton from './RoundedButton.vue'
 import Icon from './icons/Icon.vue'
@@ -56,7 +57,7 @@ export default defineComponent({
     handleClickOnAddButton () {
       this.$emit('add-step')
     },
-    handleStepUpdate (id: string, data: object) {
+    handleStepUpdate (id: string, data: Step) {
       const index = this.workout.steps.findIndex(step => step.id === id)
       if (index === -1) return
       this.$emit('update-step', index, {

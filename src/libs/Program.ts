@@ -9,9 +9,9 @@ type Timer = {
 }
 
 type UpdateHandlers = {
-  onStateUpdate: Function;
-  onTimeUpdate: Function;
-  onStepIndexUpdate: Function;
+  onStateUpdate: (v: number) => void;
+  onTimeUpdate: (v: number) => void;
+  onStepIndexUpdate: (v: number) => void;
 }
 
 class Program {
@@ -27,9 +27,9 @@ class Program {
   @OnChange('handleIndexChange')
   private index = -1
 
-  private onStateUpdate: Function
-  private onTimeUpdate: Function
-  private onStepIndexUpdate: Function
+  private onStateUpdate: (v: number) => void
+  private onTimeUpdate: (v: number) => void
+  private onStepIndexUpdate: (v: number) => void
 
   private timers: Array<Timer> = []
 
@@ -50,46 +50,46 @@ class Program {
     this.startLoop()
   }
 
-  handleTimeChange (value: number) {
+  handleTimeChange (value: number): void {
     if (this.onTimeUpdate) {
       this.onTimeUpdate(value)
     }
   }
 
-  handleStateChange (value: number) {
+  handleStateChange (value: number): void {
     if (this.onStateUpdate) {
       this.onStateUpdate(value)
     }
   }
 
-  handleIndexChange (value: number) {
+  handleIndexChange (value: number): void {
     if (this.onStepIndexUpdate) {
       this.onStepIndexUpdate(value)
     }
   }
 
-  start () {
+  start (): void {
     this.state = ProgramState.Running
     this.index = 0
     this.elapsedTime = 0
   }
 
-  stop () {
+  stop (): void {
     this.reset()
     this.state = ProgramState.Stopped
   }
 
-  play () {
+  play (): void {
     if (this.state === ProgramState.Stopped || this.state === ProgramState.Finished) return
     this.state = ProgramState.Running
   }
 
-  pause () {
+  pause (): void {
     if (this.state === ProgramState.Stopped || this.state === ProgramState.Finished) return
     this.state = ProgramState.Paused
   }
 
-  nextStep () {
+  nextStep (): void {
     if (this.state === ProgramState.Stopped || this.state === ProgramState.Finished) return
     if (this.timers[this.index + 1]) {
       this.index++
@@ -100,7 +100,7 @@ class Program {
     }
   }
 
-  previousStep () {
+  previousStep (): void {
     if (this.state === ProgramState.Stopped || this.state === ProgramState.Finished) return
     if (this.timers[this.index - 1]) {
       this.index--

@@ -62,6 +62,7 @@ import IconPlay from './icons/IconPlay.vue'
 import IconPause from './icons/IconPause.vue'
 import IconStop from './icons/IconStop.vue'
 import StepType from '@/types/stepType'
+/* global WakeLockSentinel */
 
 let wakeLock: WakeLockSentinel | null
 
@@ -85,9 +86,9 @@ export default defineComponent({
   },
   data () {
     const program = new Program(this.workout.steps, {
-      onStateUpdate: this.handleStateUpdate,
-      onTimeUpdate: this.handleTimeUpdate,
-      onStepIndexUpdate: this.handleStepIndexUpdate
+      onStateUpdate: this.handleStateUpdate as (v: number) => void,
+      onTimeUpdate: this.handleTimeUpdate as (v: number) => void,
+      onStepIndexUpdate: this.handleStepIndexUpdate as (v: number) => void
     })
 
     return {
