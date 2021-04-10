@@ -248,7 +248,7 @@ export default defineComponent({
     margin-bottom: 12px;
   }
   .bigPlayButton {
-    border: none;
+    flex-direction: column;
     width: 240px;
     height: 240px;
     background: transparent;

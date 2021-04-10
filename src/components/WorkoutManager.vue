@@ -1,12 +1,13 @@
 <template>
-  <section class="workoutManager">
-    <!-- <label class="label">Current workout</label> -->
-    <div class="title" v-if="!isRenaming" @click=toggleSelect>
-      <button class="switchButton" aria-label="Select another workout">
-        <icon width=32 height=32><icon-caret-down /></icon>
-      </button>
+  <section>
+    <button
+      v-if="!isRenaming"
+      class="switchButton"
+      @click=toggleSelect
+      aria-label="Select another workout">
+      <icon width=32 height=32 :class="['icon', isSelecting ? 'reverse' : '']"><icon-caret-down /></icon>
       <span>{{name}}</span>
-    </div>
+    </button>
     <ul class="selector" v-if="isSelecting">
       <li v-for="w of workouts" :key="w.id" @click="selectWorkout(w.id)">{{ w.name }}</li>
       <li @click="createWorkout">
@@ -136,9 +137,6 @@ export default defineComponent({
 </script>
 
 <style lang="postcss" scoped>
-  .workoutManager {
-    margin-bottom: 18px;
-  }
   .actionButton {
     margin: 0 12px 12px 0;
 
@@ -150,22 +148,22 @@ export default defineComponent({
       color: #eb3b5a;
     }
   }
-  .title {
+  .switchButton {
     display: flex;
-    line-height: 42px;
-    align-items: flex-start;
+    max-width: calc(100% - 60px);
+    height: 48px;
     margin-bottom: 18px;
     font-size: 1.75rem;
     font-weight: 700;
-    cursor: pointer;
-    max-width: 300px;
-  }
-  .switchButton {
-    display: flex;
-    margin: 6px 6px 0 0;
     border: none;
     background: none;
     color: inherit;
+  }
+  .icon {
+    transition: transform .2s ease;
+    &.reverse {
+      transform: rotate(180deg);
+    }
   }
   .question {
     margin-bottom: 12px;
@@ -198,6 +196,7 @@ export default defineComponent({
       padding: 0 12px;
       line-height: 48px;
       border-top: 2px solid #ebebeb;
+      font-size: 1.25rem;
       font-weight: 700;
       cursor: pointer;
 

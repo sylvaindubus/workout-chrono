@@ -100,7 +100,13 @@ export default defineComponent({
       const workout = this.fetchWorkoutInList(this.selectedId)
       if (!workout) return
 
-      workout.steps.push({ id: generateId(), type: StepType.Exercise, name: '', duration: 40 })
+      workout.steps.push({
+        id: generateId(),
+        type: StepType.Exercise,
+        name: '',
+        duration: 40,
+        isNew: true
+      })
       this.updateWorkoutInList(workout)
     },
     updateStep (index: number, step: Step) {
@@ -116,7 +122,8 @@ export default defineComponent({
 
       const clone = {
         ...workout.steps[index],
-        id: generateId()
+        id: generateId(),
+        isNew: true
       }
       workout.steps.splice(index, 0, clone)
       this.updateWorkoutInList(workout)
@@ -166,10 +173,10 @@ export default defineComponent({
         id: generateId(),
         name: 'My workout',
         steps: [
-          { id: generateId(), type: StepType.WarmUp, duration: 40 },
-          { id: generateId(), type: StepType.Exercise, name: 'Push-ups', duration: 60 },
-          { id: generateId(), type: StepType.Rest, duration: 20 },
-          { id: generateId(), type: StepType.Stretching, duration: 60 }
+          { id: generateId(), type: StepType.WarmUp, duration: 40, isNew: false },
+          { id: generateId(), type: StepType.Exercise, name: 'Push-ups', duration: 60, isNew: false },
+          { id: generateId(), type: StepType.Rest, duration: 20, isNew: false },
+          { id: generateId(), type: StepType.Stretching, duration: 60, isNew: false }
         ],
         createdAt: new Date(),
         updatedAt: new Date()
@@ -219,7 +226,6 @@ export default defineComponent({
     background-color: #d1d8e0;
     border-left: 6px solid #a5b1c2;
     padding: 18px;
-    padding-top: 88px;
     transform: translateX(100%);
     transition: transform .4s;
 
@@ -237,10 +243,6 @@ export default defineComponent({
     top: 18px;
     width: 48px;
     height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
     color: #fff;
     border-radius: 50%;
     background-color: #4b6584;

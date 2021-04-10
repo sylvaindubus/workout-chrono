@@ -1,10 +1,13 @@
 <template>
   <section :class="classes">
-    <div>
+    <div v-if="isEditing" class="inner">
       <label aria-label="Type">
         <select class="typeSelect" :value="step.type" name="type" @change="handleUpdate($event)">
           <option v-for="type of stepTypes" :value="type.value" :key="type.value">{{ type.label }}</option>
         </select>
+      </label>
+      <label v-if="step.type === StepType.Exercise" aria-label="Name">
+        <input class="nameInput" :value="step.name" name="stepName" @change="handleUpdate($event)" />
       </label>
       <div>
         <label aria-label="Minutes">
@@ -14,22 +17,30 @@
           <input type="number" class="timeInput" min="0" max="60" step="5" :value="seconds" name="seconds" @change="handleUpdate($event)" />
         </label>
       </div>
-      <label v-if="step.type === StepType.Exercise" aria-label="Name">
-        <input class="nameInput" :value="step.name" name="stepName" @change="handleUpdate($event)" />
-      </label>
     </div>
-    <div class="buttons">
-      <button class="button" @click="handleClickOnMoveUpButton" :disabled="isFirst" aria-label="Move step upward">
-        <icon width=24 height=24><icon-arrow-up /></icon>
+    <div v-else class="inner">
+      <p>{{ step.type }}</p>
+      <p v-if="step.name">{{ step.name }}</p>
+      <p class="time">{{ minutes }} : {{ seconds }}</p>
+    </div>
+    <button class="editButton" @click="toggleEdit" :aria-label="isEditing ? 'Stop editing step' : 'Edit step'">
+      <icon width=24 height=24>
+        <icon-check v-if="isEditing" />
+        <icon-edit v-else />}
+      </icon>
+    </button>
+    <div class="buttons" v-if="isEditing">
+      <button @click="handleClickOnMoveUpButton" :disabled="isFirst" aria-label="Move step upward">
+        <icon width=28 height=28><icon-arrow-up /></icon>
       </button>
-      <button class="button" @click="handleClickOnMoveDownButton" :disabled="isLast" aria-label="Move step downward">
-        <icon width=24 height=24><icon-arrow-down /></icon>
+      <button @click="handleClickOnMoveDownButton" :disabled="isLast" aria-label="Move step downward">
+        <icon width=28 height=28><icon-arrow-down /></icon>
       </button>
-      <button class="button" @click="handleStepClone" aria-label="Clone step">
-        <icon width=24 height=24><icon-copy /></icon>
+      <button @click="handleStepClone" aria-label="Clone step">
+        <icon width=28 height=28><icon-copy /></icon>
       </button>
-      <button class="button" @click="handleStepDelete" aria-label="Delete step">
-        <icon width=24 height=24><icon-trash /></icon>
+      <button @click="handleStepDelete" aria-label="Delete step">
+        <icon width=28 height=28><icon-trash /></icon>
       </button>
     </div>
   </section>
@@ -44,6 +55,8 @@ import IconTrash from './icons/IconTrash.vue'
 import IconCopy from './icons/IconCopy.vue'
 import IconArrowUp from './icons/IconArrowUp.vue'
 import IconArrowDown from './icons/IconArrowDown.vue'
+import IconEdit from './icons/IconEdit.vue'
+import IconCheck from './icons/IconCheck.vue'
 
 export default defineComponent({
   name: 'ProgramBuilderStep',
@@ -52,7 +65,9 @@ export default defineComponent({
     IconTrash,
     IconCopy,
     IconArrowUp,
-    IconArrowDown
+    IconArrowDown,
+    IconEdit,
+    IconCheck
   },
   props: {
     step: { type: Object, required: true },
@@ -61,6 +76,7 @@ export default defineComponent({
   },
   data () {
     return {
+      isEditing: this.step.isNew,
       StepType
     }
   },
@@ -82,6 +98,9 @@ export default defineComponent({
     }
   },
   methods: {
+    toggleEdit () {
+      this.isEditing = !this.isEditing
+    },
     handleUpdate (event: InputEvent) {
       const { name, value } = event.currentTarget as HTMLInputElement
       switch (name) {
@@ -119,73 +138,80 @@ export default defineComponent({
 
 <style lang="postcss" scoped>
   .programBuilderStep {
-    display: flex;
-    justify-content: space-between;
-    border-left: 6px solid;
-    background-color: #778ca3;
+    position: relative;
+    border-left: 9px solid;
+    background-color: #EBF1F5;
     padding: 12px;
     border-radius: 4px;
 
     &.warmupColor {
       border-color: #f7b731;
-      background-color: #fed330;
-      & .button {
-        background-color: #f7b731;
-      }
     }
 
     &.exerciseColor {
       border-color: #eb3b5a;
-      background-color: #fc5c65;
-      & .button {
-        background-color: #eb3b5a;
-      }
     }
 
     &.restColor {
       border-color: #2d98da;
-      background-color: #45aaf2;
-      & .button {
-        background-color: #2d98da;
-      }
     }
 
     &.stretchingColor {
       border-color: #20bf6b;
-      background-color: #26de81;
-      & .button {
-        background-color: #20bf6b;
-      }
     }
   }
-  select, input {
-    border: none;
-    height: 36px;
-    margin-bottom: 6px;
-    padding: 6px;
-    border-radius: 4px;
-    border: 2px solid #d1d8e0;
-    background-color: #fff;
+  .inner {
+    width: calc(100% - 52px);
     font-weight: 700;
+  }
+  .time {
+    margin-top: .25em;
+    font-size: 1.25rem;
   }
   .typeSelect,
   .nameInput {
     width: 180px;
+    margin: 6px 0;
+
+    @media (min-width: 425px) {
+      width: 240px;
+    }
   }
   .timeInput {
-    width: 50px;
-    padding: 5px;
+    margin: 6px 0;
+    text-align: center;
   }
   .buttons {
-    text-align: right;
+    display: flex;
+    justify-content: space-evenly;
+    margin: 12px -12px -12px;
+
+    & > * {
+      flex-grow: 1;
+      background-color: #fafcfd;
+      border: none;
+      border-left: 1px solid #ebebeb;
+      border-bottom: 4px solid #ebebeb;
+      padding: .5em;
+
+      &:first-child {
+        border-left: none;
+      }
+
+      &:disabled {
+        background-color: #F5F9FB;
+      }
+    }
   }
-  .button {
-    width: 36px;
-    height: 36px;
-    margin: 3px;
+  .editButton {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 42px;
+    height: 42px;
+    margin: 12px;
     padding: 0;
-    border: none;
-    border-radius: 50%;
-    outline: none;
+    background-color: #fafcfd;
+    box-shadow: #ebebeb 0px 4px 0px;
   }
 </style>
