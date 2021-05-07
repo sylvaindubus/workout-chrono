@@ -21,7 +21,8 @@
     <div v-else class="inner">
       <p>{{ step.type }}</p>
       <p v-if="step.name">{{ step.name }}</p>
-      <p class="time">{{ minutes }} : {{ seconds }}</p>
+      <p v-if="minutes > 0 || seconds > 0" class="time">{{ minutes }}:{{ seconds }}</p>
+      <p v-else class="noTimeLimitInfo">No time limit</p>
     </div>
     <button class="editButton" @click="toggleEdit" :aria-label="isEditing ? 'Stop editing step' : 'Edit step'">
       <icon width=24 height=24>
@@ -165,8 +166,11 @@ export default defineComponent({
     font-weight: 700;
   }
   .time {
-    margin-top: .25em;
-    font-size: 1.25rem;
+    margin-top: .5em;
+  }
+  .noTimeLimitInfo {
+    margin-top: .5em;
+    font-style: italic;
   }
   .typeSelect,
   .nameInput {

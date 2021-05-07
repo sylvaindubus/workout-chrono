@@ -7,20 +7,20 @@ The app is currently living [here](https://workout-chrono.vercel.app/).
 ## 🗺 Road-map
 
 * ~~Improve program state~~
+* ~~Add a preview of the next step before time's up~~
+* ~~Make clear that you can add a step without a duration~~
 * Find a better name
 * Improve icon management
-* ~~Add a preview of the next step before time's up~~
 * Add some sounds during the last 5 seconds of a step
 * Make things a bit prettier, add smooth animations and a cool mascot
 * Add a presentation screen
-* Make clear that you can add a step without a duration
 * Improve progress bar features
 * Support drag-and-drop on mobile
 
 ## 💡 Future ideas
 
-* Support different languages
 * ~~Support multiple workouts~~
+* Support different languages
 * Add another step type, like "Other", using a purple color
 
 ## 🛠 Project setup
