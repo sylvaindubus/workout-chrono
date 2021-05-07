@@ -144,7 +144,16 @@ export default defineComponent({
       this.updateWorkoutInList(workout)
     },
     saveWorkouts () {
-      localStorage.setItem('workouts', JSON.stringify(this.workouts))
+      // Remove new status from all workout's steps
+      const workouts = this.workouts.map((workout: Workout) => {
+        workout.steps = workout.steps.map(step => {
+          step.isNew = false
+          return step
+        })
+        return workout
+      })
+      // Save all workouts on local storage
+      localStorage.setItem('workouts', JSON.stringify(workouts))
     },
     loadWorkouts (): Workout[] | null {
       if (!localStorage.getItem('workouts')) {
