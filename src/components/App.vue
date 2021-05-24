@@ -2,7 +2,7 @@
   <main :class="{ isFull: !isAsideVisible }">
     <program-runner :workout="workout" />
     <button class="toggleButton" @click="toggleAside" v-if="!isAsideVisible" aria-label="Open aside">
-      <icon width=28 height=28><icon-dumbbell /></icon>
+      <icon width="28" height="28"><icon-dumbbell /></icon>
     </button>
   </main>
   <aside :class="{ isVisible: isAsideVisible }">
@@ -23,7 +23,7 @@
       @move-step="moveStep"
     />
     <button class="toggleButton" @click="toggleAside" v-if="isAsideVisible" aria-label="Close aside">
-      <icon width=28 height=28><icon-close /></icon>
+      <icon width="28" height="28"><icon-close /></icon>
     </button>
   </aside>
 </template>
@@ -51,9 +51,9 @@ export default defineComponent({
     WorkoutManager,
     Icon,
     IconDumbbell,
-    IconClose
+    IconClose,
   },
-  data () {
+  data() {
     // Temporary code to adapt from previous way of storing data
     if (localStorage.getItem('workout') && !localStorage.getItem('workouts')) {
       const workout = JSON.parse(localStorage.getItem('workout') || '{}')
@@ -70,33 +70,33 @@ export default defineComponent({
     return {
       workouts,
       selectedId: workouts[0].id,
-      isAsideVisible: false
+      isAsideVisible: false,
     }
   },
   methods: {
-    createWorkout () {
+    createWorkout() {
       const workout = this.getNewWorkout()
       this.workouts.push(workout)
       this.selectedId = workout.id
     },
-    renameWorkout (name: string) {
+    renameWorkout(name: string) {
       const workout = this.fetchWorkoutInList(this.selectedId)
       if (!workout) return
 
       workout.name = name !== '' ? name : 'Unnamed workout'
       this.updateWorkoutInList(workout)
     },
-    selectWorkout (id: string) {
+    selectWorkout(id: string) {
       this.selectedId = id
     },
-    deleteWorkout () {
+    deleteWorkout() {
       const workout = this.fetchWorkoutInList(this.selectedId)
       if (!workout) return
 
       this.removeWorkoutInList(workout)
       this.selectedId = this.workouts[0].id
     },
-    addStep () {
+    addStep() {
       const workout = this.fetchWorkoutInList(this.selectedId)
       if (!workout) return
 
@@ -105,37 +105,37 @@ export default defineComponent({
         type: StepType.Exercise,
         name: '',
         duration: 40,
-        isNew: true
+        isNew: true,
       })
       this.updateWorkoutInList(workout)
     },
-    updateStep (index: number, step: Step) {
+    updateStep(index: number, step: Step) {
       const workout = this.fetchWorkoutInList(this.selectedId)
       if (!workout) return
 
       workout.steps[index] = step
       this.updateWorkoutInList(workout)
     },
-    cloneStep (index: number) {
+    cloneStep(index: number) {
       const workout = this.fetchWorkoutInList(this.selectedId)
       if (!workout) return
 
       const clone = {
         ...workout.steps[index],
         id: generateId(),
-        isNew: true
+        isNew: true,
       }
       workout.steps.splice(index, 0, clone)
       this.updateWorkoutInList(workout)
     },
-    deleteStep (index: number) {
+    deleteStep(index: number) {
       const workout = this.fetchWorkoutInList(this.selectedId)
       if (!workout) return
 
       workout.steps.splice(index, 1)
       this.updateWorkoutInList(workout)
     },
-    moveStep (index: number, newIndex: number) {
+    moveStep(index: number, newIndex: number) {
       const workout = this.fetchWorkoutInList(this.selectedId)
       if (!workout) return
 
@@ -143,10 +143,10 @@ export default defineComponent({
       workout.steps.splice(newIndex, 0, step)
       this.updateWorkoutInList(workout)
     },
-    saveWorkouts () {
+    saveWorkouts() {
       // Remove new status from all workout's steps
       const workouts = this.workouts.map((workout: Workout) => {
-        workout.steps = workout.steps.map(step => {
+        workout.steps = workout.steps.map((step) => {
           step.isNew = false
           return step
         })
@@ -155,47 +155,53 @@ export default defineComponent({
       // Save all workouts on local storage
       localStorage.setItem('workouts', JSON.stringify(workouts))
     },
-    loadWorkouts (): Workout[] | null {
+    loadWorkouts(): Workout[] | null {
       if (!localStorage.getItem('workouts')) {
         return null
       }
       return JSON.parse(localStorage.getItem('workouts') || '[]')
     },
-    toggleAside () {
+    toggleAside() {
       this.isAsideVisible = !this.isAsideVisible
     },
-    fetchWorkoutInList (id: string): Workout | undefined {
+    fetchWorkoutInList(id: string): Workout | undefined {
       return this.workouts.find((w: Workout) => w.id === id)
     },
-    updateWorkoutInList (workout: Workout) {
+    updateWorkoutInList(workout: Workout) {
       this.workouts = this.workouts.map((w: Workout) => {
         if (w.id !== workout.id) return w
         workout.updatedAt = new Date()
         return workout
       })
     },
-    removeWorkoutInList (workout: Workout) {
+    removeWorkoutInList(workout: Workout) {
       this.workouts = this.workouts.filter((w: Workout) => w.id !== workout.id)
     },
-    getNewWorkout (): Workout {
+    getNewWorkout(): Workout {
       return {
         id: generateId(),
         name: 'My workout',
         steps: [
           { id: generateId(), type: StepType.WarmUp, duration: 40, isNew: false },
-          { id: generateId(), type: StepType.Exercise, name: 'Push-ups', duration: 60, isNew: false },
+          {
+            id: generateId(),
+            type: StepType.Exercise,
+            name: 'Push-ups',
+            duration: 60,
+            isNew: false,
+          },
           { id: generateId(), type: StepType.Rest, duration: 20, isNew: false },
-          { id: generateId(), type: StepType.Stretching, duration: 60, isNew: false }
+          { id: generateId(), type: StepType.Stretching, duration: 60, isNew: false },
         ],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       }
-    }
+    },
   },
   computed: {
-    workout (): Workout | undefined {
+    workout(): Workout | undefined {
       return this.fetchWorkoutInList(this.selectedId)
-    }
+    },
   },
   watch: {
     workouts: {
@@ -205,55 +211,55 @@ export default defineComponent({
         // Save the workout after some seconds without changes
         saveTimeout = setTimeout(this.saveWorkouts, 2000)
       },
-      deep: true
-    }
-  }
+      deep: true,
+    },
+  },
 })
 </script>
 
 <style lang="postcss">
-  main {
-    position: relative;
+main {
+  position: relative;
+  width: 100%;
+  transition: width 0.4s;
+
+  @media (min-width: 768px) {
+    width: calc(100% - 450px);
+  }
+
+  &.isFull {
     width: 100%;
-    transition: width .4s;
-
-    @media (min-width: 768px) {
-      width: calc(100% - 450px);
-    }
-
-    &.isFull {
-      width: 100%;
-    }
   }
-  aside {
-    position: fixed;
-    right: 0;
-    width: 450px;
-    max-width: 100vw;
-    height: 100%;
-    overflow-y: auto;
-    background-color: #d1d8e0;
-    border-left: 6px solid #a5b1c2;
-    padding: 18px;
-    transform: translateX(100%);
-    transition: transform .4s;
+}
+aside {
+  position: fixed;
+  right: 0;
+  width: 450px;
+  max-width: 100vw;
+  height: 100%;
+  overflow-y: auto;
+  background-color: #d1d8e0;
+  border-left: 6px solid #a5b1c2;
+  padding: 18px;
+  transform: translateX(100%);
+  transition: transform 0.4s;
 
-    @media (min-width: 425px) {
-      padding-top: 18px;
-    }
+  @media (min-width: 425px) {
+    padding-top: 18px;
+  }
 
-    &.isVisible {
-      transform: translateX(0px);
-    }
+  &.isVisible {
+    transform: translateX(0px);
   }
-  .toggleButton {
-    position: absolute;
-    right: 18px;
-    top: 18px;
-    width: 48px;
-    height: 48px;
-    color: #fff;
-    border-radius: 50%;
-    background-color: #4b6584;
-  }
+}
+.toggleButton {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  width: 48px;
+  height: 48px;
+  color: #fff;
+  border-radius: 50%;
+  background-color: #4b6584;
+}
 </style>

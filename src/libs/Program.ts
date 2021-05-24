@@ -33,14 +33,14 @@ class Program {
 
   private timers: Array<Timer> = []
 
-  constructor (steps: Array<Step>, updateHandlers: UpdateHandlers) {
+  constructor(steps: Array<Step>, updateHandlers: UpdateHandlers) {
     this.onStateUpdate = updateHandlers.onStateUpdate
     this.onTimeUpdate = updateHandlers.onTimeUpdate
     this.onStepIndexUpdate = updateHandlers.onStepIndexUpdate
 
     this.timers = steps.map(step => ({
       duration: step.duration * 1000,
-      decrement: step.duration > 0
+      decrement: step.duration > 0,
     }))
 
     if (this.timers[0]) {
@@ -50,46 +50,46 @@ class Program {
     this.startLoop()
   }
 
-  handleTimeChange (value: number): void {
+  handleTimeChange(value: number): void {
     if (this.onTimeUpdate) {
       this.onTimeUpdate(value)
     }
   }
 
-  handleStateChange (value: number): void {
+  handleStateChange(value: number): void {
     if (this.onStateUpdate) {
       this.onStateUpdate(value)
     }
   }
 
-  handleIndexChange (value: number): void {
+  handleIndexChange(value: number): void {
     if (this.onStepIndexUpdate) {
       this.onStepIndexUpdate(value)
     }
   }
 
-  start (): void {
+  start(): void {
     this.state = ProgramState.Running
     this.index = 0
     this.elapsedTime = 0
   }
 
-  stop (): void {
+  stop(): void {
     this.reset()
     this.state = ProgramState.Stopped
   }
 
-  play (): void {
+  play(): void {
     if (this.state === ProgramState.Stopped || this.state === ProgramState.Finished) return
     this.state = ProgramState.Running
   }
 
-  pause (): void {
+  pause(): void {
     if (this.state === ProgramState.Stopped || this.state === ProgramState.Finished) return
     this.state = ProgramState.Paused
   }
 
-  nextStep (): void {
+  nextStep(): void {
     if (this.state === ProgramState.Stopped || this.state === ProgramState.Finished) return
     if (this.timers[this.index + 1]) {
       this.index++
@@ -100,7 +100,7 @@ class Program {
     }
   }
 
-  previousStep (): void {
+  previousStep(): void {
     if (this.state === ProgramState.Stopped || this.state === ProgramState.Finished) return
     if (this.timers[this.index - 1]) {
       this.index--
@@ -108,24 +108,24 @@ class Program {
     }
   }
 
-  private reset () {
+  private reset() {
     this.time = this.timers[0]?.duration || 0
     this.index = -1
   }
 
-  private startLoop () {
+  private startLoop() {
     this.prevTimestamp = window.performance.now()
     requestAnimationFrame(this.loop.bind(this))
   }
 
-  private loop (currentTimestamp: number) {
+  private loop(currentTimestamp: number) {
     const interval = currentTimestamp - this.prevTimestamp
     this.prevTimestamp = currentTimestamp
     this.updateTime(interval)
     requestAnimationFrame(this.loop.bind(this))
   }
 
-  private updateTime (interval: number) {
+  private updateTime(interval: number) {
     if (this.state !== ProgramState.Running) {
       return
     }

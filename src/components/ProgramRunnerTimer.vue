@@ -14,30 +14,30 @@ import { formatHours, formatMinutes, formatSeconds, formatCentiseconds } from '.
 export default defineComponent({
   name: 'ProgramRunnerTimer',
   props: {
-    time: { type: Number, required: true }
+    time: { type: Number, required: true },
   },
   computed: {
-    hours (): string {
+    hours(): string {
       return formatHours(this.time / 1000)
     },
-    minutes (): string {
+    minutes(): string {
       return formatMinutes(this.time / 1000)
     },
-    seconds (): string {
+    seconds(): string {
       return formatSeconds(this.time / 1000)
     },
-    centiseconds (): string {
+    centiseconds(): string {
       return formatCentiseconds(this.time / 1000)
-    }
-  }
+    },
+  },
 })
 </script>
 
 <style scoped>
-  .programRunnerTimer {
-    font-size: 5rem;
-  }
-  .small {
-    font-size: .6em;
-  }
+.programRunnerTimer {
+  font-size: 5rem;
+}
+.small {
+  font-size: 0.6em;
+}
 </style>

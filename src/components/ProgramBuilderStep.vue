@@ -3,7 +3,9 @@
     <div v-if="isEditing" class="inner">
       <label aria-label="Type">
         <select class="typeSelect" :value="step.type" name="type" @change="handleUpdate($event)">
-          <option v-for="type of stepTypes" :value="type.value" :key="type.value">{{ type.label }}</option>
+          <option v-for="type of stepTypes" :value="type.value" :key="type.value">
+            {{ type.label }}
+          </option>
         </select>
       </label>
       <label v-if="step.type === StepType.Exercise" aria-label="Name">
@@ -11,10 +13,29 @@
       </label>
       <div>
         <label aria-label="Minutes">
-          <input type="number" class="timeInput" min="0" max="60" step="1" :value="minutes" name="minutes" @change="handleUpdate($event)" /> :
+          <input
+            type="number"
+            class="timeInput"
+            min="0"
+            max="60"
+            step="1"
+            :value="minutes"
+            name="minutes"
+            @change="handleUpdate($event)"
+          />
+          :
         </label>
         <label aria-label="Seconds">
-          <input type="number" class="timeInput" min="0" max="60" step="5" :value="seconds" name="seconds" @change="handleUpdate($event)" />
+          <input
+            type="number"
+            class="timeInput"
+            min="0"
+            max="60"
+            step="5"
+            :value="seconds"
+            name="seconds"
+            @change="handleUpdate($event)"
+          />
         </label>
       </div>
     </div>
@@ -25,23 +46,23 @@
       <p v-else class="noTimeLimitInfo">No time limit</p>
     </div>
     <button class="editButton" @click="toggleEdit" :aria-label="isEditing ? 'Stop editing step' : 'Edit step'">
-      <icon width=24 height=24>
+      <icon width="24" height="24">
         <icon-check v-if="isEditing" />
         <icon-edit v-else />}
       </icon>
     </button>
     <div class="buttons" v-if="isEditing">
       <button @click="handleClickOnMoveUpButton" :disabled="isFirst" aria-label="Move step upward">
-        <icon width=28 height=28><icon-arrow-up /></icon>
+        <icon width="28" height="28"><icon-arrow-up /></icon>
       </button>
       <button @click="handleClickOnMoveDownButton" :disabled="isLast" aria-label="Move step downward">
-        <icon width=28 height=28><icon-arrow-down /></icon>
+        <icon width="28" height="28"><icon-arrow-down /></icon>
       </button>
       <button @click="handleStepClone" aria-label="Clone step">
-        <icon width=28 height=28><icon-copy /></icon>
+        <icon width="28" height="28"><icon-copy /></icon>
       </button>
       <button @click="handleStepDelete" aria-label="Delete step">
-        <icon width=28 height=28><icon-trash /></icon>
+        <icon width="28" height="28"><icon-trash /></icon>
       </button>
     </div>
   </section>
@@ -68,48 +89,52 @@ export default defineComponent({
     IconArrowUp,
     IconArrowDown,
     IconEdit,
-    IconCheck
+    IconCheck,
   },
   props: {
     step: { type: Object, required: true },
     isFirst: Boolean,
-    isLast: Boolean
+    isLast: Boolean,
   },
-  data () {
+  data() {
     return {
       isEditing: this.step.isNew,
-      StepType
+      StepType,
     }
   },
   computed: {
-    classes (): Array<string> {
-      return [
-        'programBuilderStep',
-        `${this.step.type.toLowerCase()}Color`
-      ]
+    classes(): Array<string> {
+      return ['programBuilderStep', `${this.step.type.toLowerCase()}Color`]
     },
-    stepTypes (): Array<{ value: string; label: string | StepType }> {
-      return (Object.entries(StepType).map(([label, value]) => ({ value, label })))
+    stepTypes(): Array<{ value: string; label: string | StepType }> {
+      return Object.entries(StepType).map(([label, value]) => ({
+        value,
+        label,
+      }))
     },
-    minutes (): string {
+    minutes(): string {
       return formatMinutes(this.step.duration)
     },
-    seconds (): string {
+    seconds(): string {
       return formatSeconds(this.step.duration)
-    }
+    },
   },
   methods: {
-    toggleEdit () {
+    toggleEdit() {
       this.isEditing = !this.isEditing
     },
-    handleUpdate (event: InputEvent) {
+    handleUpdate(event: InputEvent) {
       const { name, value } = event.currentTarget as HTMLInputElement
       switch (name) {
         case 'minutes':
-          this.$emit('update', this.step.id, { duration: parseInt(value) * 60 + this.step.duration % 60 })
+          this.$emit('update', this.step.id, {
+            duration: parseInt(value) * 60 + (this.step.duration % 60),
+          })
           break
         case 'seconds':
-          this.$emit('update', this.step.id, { duration: Math.floor(this.step.duration / 60) * 60 + parseInt(value) })
+          this.$emit('update', this.step.id, {
+            duration: Math.floor(this.step.duration / 60) * 60 + parseInt(value),
+          })
           break
         case 'type':
           this.$emit('update', this.step.id, { [name]: value })
@@ -121,101 +146,101 @@ export default defineComponent({
           this.$emit('update', this.step.id, { [name]: value })
       }
     },
-    handleStepClone () {
+    handleStepClone() {
       this.$emit('clone', this.step.id)
     },
-    handleStepDelete () {
+    handleStepDelete() {
       this.$emit('delete', this.step.id)
     },
-    handleClickOnMoveUpButton () {
+    handleClickOnMoveUpButton() {
       this.$emit('up', this.step.id)
     },
-    handleClickOnMoveDownButton () {
+    handleClickOnMoveDownButton() {
       this.$emit('down', this.step.id)
-    }
-  }
+    },
+  },
 })
 </script>
 
 <style lang="postcss" scoped>
-  .programBuilderStep {
-    position: relative;
-    border-left: 9px solid;
-    background-color: #EBF1F5;
-    padding: 12px;
-    border-radius: 4px;
+.programBuilderStep {
+  position: relative;
+  border-left: 9px solid;
+  background-color: #ebf1f5;
+  padding: 12px;
+  border-radius: 4px;
 
-    &.warmupColor {
-      border-color: #f7b731;
-    }
-
-    &.exerciseColor {
-      border-color: #eb3b5a;
-    }
-
-    &.restColor {
-      border-color: #2d98da;
-    }
-
-    &.stretchingColor {
-      border-color: #20bf6b;
-    }
+  &.warmupColor {
+    border-color: #f7b731;
   }
-  .inner {
-    width: calc(100% - 52px);
-    font-weight: 700;
-  }
-  .time {
-    margin-top: .5em;
-  }
-  .noTimeLimitInfo {
-    margin-top: .5em;
-    font-style: italic;
-  }
-  .typeSelect,
-  .nameInput {
-    width: 180px;
-    margin: 6px 0;
 
-    @media (min-width: 425px) {
-      width: 240px;
-    }
+  &.exerciseColor {
+    border-color: #eb3b5a;
   }
-  .timeInput {
-    margin: 6px 0;
-    text-align: center;
+
+  &.restColor {
+    border-color: #2d98da;
   }
-  .buttons {
-    display: flex;
-    justify-content: space-evenly;
-    margin: 12px -12px -12px;
 
-    & > * {
-      flex-grow: 1;
-      background-color: #fafcfd;
-      border: none;
-      border-left: 1px solid #ebebeb;
-      border-bottom: 4px solid #ebebeb;
-      padding: .5em;
-
-      &:first-child {
-        border-left: none;
-      }
-
-      &:disabled {
-        background-color: #F5F9FB;
-      }
-    }
+  &.stretchingColor {
+    border-color: #20bf6b;
   }
-  .editButton {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 42px;
-    height: 42px;
-    margin: 12px;
-    padding: 0;
+}
+.inner {
+  width: calc(100% - 52px);
+  font-weight: 700;
+}
+.time {
+  margin-top: 0.5em;
+}
+.noTimeLimitInfo {
+  margin-top: 0.5em;
+  font-style: italic;
+}
+.typeSelect,
+.nameInput {
+  width: 180px;
+  margin: 6px 0;
+
+  @media (min-width: 425px) {
+    width: 240px;
+  }
+}
+.timeInput {
+  margin: 6px 0;
+  text-align: center;
+}
+.buttons {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 12px -12px -12px;
+
+  & > * {
+    flex-grow: 1;
     background-color: #fafcfd;
-    box-shadow: #ebebeb 0px 4px 0px;
+    border: none;
+    border-left: 1px solid #ebebeb;
+    border-bottom: 4px solid #ebebeb;
+    padding: 0.5em;
+
+    &:first-child {
+      border-left: none;
+    }
+
+    &:disabled {
+      background-color: #f5f9fb;
+    }
   }
+}
+.editButton {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 42px;
+  height: 42px;
+  margin: 12px;
+  padding: 0;
+  background-color: #fafcfd;
+  box-shadow: #ebebeb 0px 4px 0px;
+}
 </style>

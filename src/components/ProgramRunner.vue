@@ -4,7 +4,8 @@
     @keyup.left="handleClickOnPrevious"
     @keyup.right="handleClickOnNext"
     @keyup.space="handleClickOnStartPause"
-    tabindex="0">
+    tabindex="0"
+  >
     <div class="block main">
       <div v-if="programState === ProgramState.Running || programState === ProgramState.Paused">
         <p class="title">{{ title }}</p>
@@ -19,25 +20,33 @@
       </div>
       <div v-else>
         <button class="bigPlayButton" @click="handleClickOnStartPause" aria-label="Start">
-          <icon width=24 height=24><icon-round-play /></icon>
+          <icon width="24" height="24"><icon-round-play /></icon>
           <div>Let's do it!</div>
         </button>
       </div>
     </div>
     <div class="block buttons" v-if="programState === ProgramState.Running || programState === ProgramState.Paused">
       <rounded-button @click="handleClickOnPrevious" aria-label="Previous step">
-        <icon width=24 height=24><icon-previous /></icon>
+        <icon width="24" height="24"><icon-previous /></icon>
       </rounded-button>
-      <rounded-button @click="handleClickOnStartPause" :aria-label="programState === ProgramState.Running ? 'Pause' : 'Start'">
-        <icon width=24 height=24 v-if="programState === ProgramState.Running"><icon-pause /></icon>
-        <icon width=24 height=24 v-else><icon-play /></icon>
+      <rounded-button
+        @click="handleClickOnStartPause"
+        :aria-label="programState === ProgramState.Running ? 'Pause' : 'Start'"
+      >
+        <icon width="24" height="24" v-if="programState === ProgramState.Running"><icon-pause /></icon>
+        <icon width="24" height="24" v-else><icon-play /></icon>
       </rounded-button>
       <rounded-button @click="handleClickOnNext" aria-label="Next step">
-        <icon width=24 height=24><icon-next /></icon>
+        <icon width="24" height="24"><icon-next /></icon>
       </rounded-button>
     </div>
-    <rounded-button class="stopButton" @click="handleClickOnStop" v-if="programState === ProgramState.Paused" aria-label="Stop workout">
-      <icon width=24 height=24><icon-stop /></icon>
+    <rounded-button
+      class="stopButton"
+      @click="handleClickOnStop"
+      v-if="programState === ProgramState.Paused"
+      aria-label="Stop workout"
+    >
+      <icon width="24" height="24"><icon-stop /></icon>
       <span>Stop</span>
     </rounded-button>
     <program-runner-progress :steps="workout.steps" :currentStep="currentStep" />
@@ -79,16 +88,16 @@ export default defineComponent({
     IconNext,
     IconPlay,
     IconPause,
-    IconStop
+    IconStop,
   },
   props: {
-    workout!: { type: Object as () => Workout, required: true }
+    workout: { type: Object as () => Workout, required: true },
   },
-  data () {
+  data() {
     const program = new Program(this.workout.steps, {
       onStateUpdate: this.handleStateUpdate as (v: number) => void,
       onTimeUpdate: this.handleTimeUpdate as (v: number) => void,
-      onStepIndexUpdate: this.handleStepIndexUpdate as (v: number) => void
+      onStepIndexUpdate: this.handleStepIndexUpdate as (v: number) => void,
     })
 
     return {
@@ -96,7 +105,7 @@ export default defineComponent({
       stepIndex: -1,
       program: program,
       programState: ProgramState.Stopped,
-      ProgramState: ProgramState
+      ProgramState: ProgramState,
     }
   },
   watch: {
@@ -107,14 +116,14 @@ export default defineComponent({
         this.program = new Program(newWorkout.steps, {
           onStateUpdate: this.handleStateUpdate,
           onTimeUpdate: this.handleTimeUpdate,
-          onStepIndexUpdate: this.handleStepIndexUpdate
+          onStepIndexUpdate: this.handleStepIndexUpdate,
         })
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   computed: {
-    classes (): Array<string> {
+    classes(): Array<string> {
       const classes = ['programRunner']
       const step = this.workout.steps[this.stepIndex]
       if (step) {
@@ -122,7 +131,7 @@ export default defineComponent({
       }
       return classes
     },
-    title (): string {
+    title(): string {
       const step = this.workout.steps[this.stepIndex]
       if (step) {
         return step.name ? step.name : step.type
@@ -130,33 +139,31 @@ export default defineComponent({
         return ''
       }
     },
-    currentStep (): Step | null {
+    currentStep(): Step | null {
       return this.workout.steps[this.stepIndex] || null
     },
-    nextStep (): Step | null {
+    nextStep(): Step | null {
       return this.workout.steps[this.stepIndex + 1] || null
     },
-    isNextStepVisible (): boolean {
+    isNextStepVisible(): boolean {
       // The next step should be visible if this is a exercise step
       // and if the current step is almost done (less than 20 seconds left)
       return (
         this.nextStep !== null &&
         this.nextStep.type === StepType.Exercise &&
-        this.currentStep !== null && (
-          (this.currentStep.duration > 0 && this.time < 20000) ||
-          this.currentStep.duration === 0
-        )
+        this.currentStep !== null &&
+        ((this.currentStep.duration > 0 && this.time < 20000) || this.currentStep.duration === 0)
       )
-    }
+    },
   },
   methods: {
-    handleTimeUpdate (time: number) {
+    handleTimeUpdate(time: number) {
       this.time = time
     },
-    handleStepIndexUpdate (index: number) {
+    handleStepIndexUpdate(index: number) {
       this.stepIndex = index
     },
-    handleStateUpdate (state: ProgramState) {
+    handleStateUpdate(state: ProgramState) {
       this.programState = state
 
       if (state === ProgramState.Running && !wakeLock) {
@@ -165,7 +172,7 @@ export default defineComponent({
         this.releaseWakeLock()
       }
     },
-    handleClickOnStartPause () {
+    handleClickOnStartPause() {
       if (this.programState === ProgramState.Running) {
         this.program.pause()
       } else if (this.programState === ProgramState.Paused) {
@@ -174,104 +181,104 @@ export default defineComponent({
         this.program.start()
       }
     },
-    handleClickOnStop () {
+    handleClickOnStop() {
       this.program.stop()
     },
-    handleClickOnPrevious () {
+    handleClickOnPrevious() {
       this.program.previousStep()
     },
-    handleClickOnNext () {
+    handleClickOnNext() {
       this.program.nextStep()
     },
-    async requestWakeLock () {
+    async requestWakeLock() {
       wakeLock = await navigator.wakeLock.request('screen')
     },
-    async releaseWakeLock () {
+    async releaseWakeLock() {
       if (!wakeLock) return
       wakeLock.release()
       wakeLock = null
-    }
-  }
+    },
+  },
 })
 </script>
 
 <style lang="postcss" scoped>
-  .programRunner {
-    position: relative;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    height: 100%;
-    background-color: #f1f1f1;
-    transition: background-color ease .75s, color ease .75s;
+.programRunner {
+  position: relative;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  background-color: #f1f1f1;
+  transition: background-color ease 0.75s, color ease 0.75s;
 
-    &.warmupColor {
-      background-color: #fed330;
-    }
+  &.warmupColor {
+    background-color: #fed330;
+  }
 
-    &.exerciseColor {
-      background-color: #fc5c65;
-      color: #fff;
-    }
+  &.exerciseColor {
+    background-color: #fc5c65;
+    color: #fff;
+  }
 
-    &.restColor {
-      background-color: #45aaf2;
-      color: #fff;
-    }
+  &.restColor {
+    background-color: #45aaf2;
+    color: #fff;
+  }
 
-    &.stretchingColor {
-      background-color: #26de81;
-      color: #fff;
+  &.stretchingColor {
+    background-color: #26de81;
+    color: #fff;
+  }
+}
+.block {
+  position: absolute;
+  padding: 18px;
+  font-size: 2rem;
+
+  &.main {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  &.buttons {
+    width: 100%;
+    bottom: 18px;
+
+    & > * {
+      margin: 0 6px;
     }
   }
-  .block {
-    position: absolute;
-    padding: 18px;
-    font-size: 2rem;
+}
+.title {
+  margin-bottom: 12px;
+}
+.bigPlayButton {
+  flex-direction: column;
+  width: 240px;
+  height: 240px;
+  background: transparent;
+  font-weight: 700;
+  color: #4b6584;
+  text-transform: uppercase;
 
-    &.main {
-      top: 50%;
-      transform: translateY(-50%);
-    }
-    &.buttons {
-      width: 100%;
-      bottom: 18px;
+  & > svg {
+    width: 50%;
+    height: 50%;
+  }
+}
+.stopButton {
+  position: absolute;
+  left: 18px;
+  top: 18px;
+  color: #eb3b5a;
 
-      & > * {
-        margin: 0 6px;
-      }
-    }
+  & > svg {
+    margin-right: 3px;
   }
-  .title {
-    margin-bottom: 12px;
-  }
-  .bigPlayButton {
-    flex-direction: column;
-    width: 240px;
-    height: 240px;
-    background: transparent;
-    font-weight: 700;
-    color: #4b6584;
-    text-transform: uppercase;
-
-    & > svg {
-      width: 50%;
-      height: 50%;
-    }
-  }
-  .stopButton {
-    position: absolute;
-    left: 18px;
-    top: 18px;
-    color: #eb3b5a;
-
-    & > svg {
-      margin-right: 3px;
-    }
-  }
-  .endButton {
-    margin-top: 24px;
-  }
+}
+.endButton {
+  margin-top: 24px;
+}
 </style>

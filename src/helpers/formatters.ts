@@ -12,5 +12,5 @@ export {
   formatHours,
   formatMinutes,
   formatSeconds,
-  formatCentiseconds
+  formatCentiseconds,
 }

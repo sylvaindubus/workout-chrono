@@ -3,7 +3,7 @@
     <ul>
       <li
         v-for="step in steps"
-        :key={step}
+        :key="{ step }"
         :class="[step === currentStep ? 'current' : '', `${step.type.toLowerCase()}Color`]"
         :style="getElementStyle(step.duration)"
       ></li>
@@ -19,11 +19,11 @@ export default defineComponent({
   name: 'ProgramRunnerProgress',
   props: {
     steps: { type: Array as () => Array<Step>, required: true },
-    currentStep: { type: Object as () => Step }
+    currentStep: { type: Object as () => Step },
   },
-  data () {
+  data() {
     return {
-      totalDuration: 0
+      totalDuration: 0,
     }
   },
   watch: {
@@ -34,53 +34,53 @@ export default defineComponent({
         }, 0)
       },
       immediate: true,
-      deep: true
-    }
+      deep: true,
+    },
   },
   methods: {
-    getElementStyle (duration: number) {
+    getElementStyle(duration: number) {
       if (duration === 0) duration = 60
-      const width = `${duration * 100 / this.totalDuration}%`
+      const width = `${(duration * 100) / this.totalDuration}%`
       return { width }
-    }
-  }
+    },
+  },
 })
 </script>
 
 <style lang="postcss" scoped>
-  .programRunnerProgress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow-y: hidden;
+.programRunnerProgress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: hidden;
+}
+ul {
+  display: flex;
+  align-items: flex-end;
+}
+li {
+  min-width: 3px;
+  height: 12px;
+
+  &.warmupColor {
+    background-color: #f7b731;
   }
-  ul {
-    display: flex;
-    align-items: flex-end;
+
+  &.exerciseColor {
+    background-color: #eb3b5a;
   }
-  li {
-    min-width: 3px;
-    height: 12px;
 
-    &.warmupColor {
-      background-color: #f7b731;
-    }
-
-    &.exerciseColor {
-      background-color: #eb3b5a;
-    }
-
-    &.restColor {
-      background-color: #2d98da;
-    }
-
-    &.stretchingColor {
-      background-color: #20bf6b;
-    }
-
-    &.current {
-      animation: shineBackground 2s infinite;
-    }
+  &.restColor {
+    background-color: #2d98da;
   }
+
+  &.stretchingColor {
+    background-color: #20bf6b;
+  }
+
+  &.current {
+    animation: shineBackground 2s infinite;
+  }
+}
 </style>
