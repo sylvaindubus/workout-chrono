@@ -15,7 +15,7 @@
       <div v-else-if="programState === ProgramState.Finished">
         <p class="title">Well done!</p>
         <p class="title">You did it in:</p>
-        <program-runner-timer :time="program.elapsedTime" />
+        <program-runner-timer :time="program.totalTime" />
         <rounded-button class="endButton" @click="handleClickOnStop">Okay!</rounded-button>
       </div>
       <div v-else>
@@ -98,6 +98,7 @@ export default defineComponent({
       onStateUpdate: this.handleStateUpdate as (v: number) => void,
       onTimeUpdate: this.handleTimeUpdate as (v: number) => void,
       onStepIndexUpdate: this.handleStepIndexUpdate as (v: number) => void,
+      onElapsingUpdate: this.handleElapsingUpdate as (v: boolean) => void,
     })
 
     return {
@@ -106,6 +107,7 @@ export default defineComponent({
       program: program,
       programState: ProgramState.Stopped,
       ProgramState: ProgramState,
+      countdown: new Audio('countdown.mp3'),
     }
   },
   watch: {
@@ -117,6 +119,7 @@ export default defineComponent({
           onStateUpdate: this.handleStateUpdate,
           onTimeUpdate: this.handleTimeUpdate,
           onStepIndexUpdate: this.handleStepIndexUpdate,
+          onElapsingUpdate: this.handleElapsingUpdate,
         })
       },
       deep: true,
@@ -172,23 +175,43 @@ export default defineComponent({
         this.releaseWakeLock()
       }
     },
+    handleElapsingUpdate(elapsing: boolean) {
+      if (elapsing) {
+        this.countdown.play()
+      }
+    },
     handleClickOnStartPause() {
       if (this.programState === ProgramState.Running) {
         this.program.pause()
+        if (!this.countdown.paused && this.countdown.currentTime > 0) {
+          this.countdown.pause()
+        }
       } else if (this.programState === ProgramState.Paused) {
         this.program.play()
+        if (this.countdown.paused && this.countdown.currentTime > 0) {
+          this.countdown.play()
+        }
       } else {
         this.program.start()
       }
     },
     handleClickOnStop() {
+      this.stopCountdown()
       this.program.stop()
     },
     handleClickOnPrevious() {
+      this.stopCountdown()
       this.program.previousStep()
     },
     handleClickOnNext() {
+      this.stopCountdown()
       this.program.nextStep()
+    },
+    stopCountdown() {
+      if (!this.countdown.paused) {
+        this.countdown.pause()
+      }
+      this.countdown.currentTime = 0
     },
     async requestWakeLock() {
       wakeLock = await navigator.wakeLock.request('screen')

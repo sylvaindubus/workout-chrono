@@ -43,7 +43,7 @@
       <p>{{ step.type }}</p>
       <p v-if="step.name">{{ step.name }}</p>
       <p v-if="minutes > 0 || seconds > 0" class="time">{{ minutes }}:{{ seconds }}</p>
-      <p v-else class="noTimeLimitInfo">No time limit</p>
+      <p v-else class="noTimeLimitInfo">No timer</p>
     </div>
     <button class="editButton" @click="toggleEdit" :aria-label="isEditing ? 'Stop editing step' : 'Edit step'">
       <icon width="24" height="24">
