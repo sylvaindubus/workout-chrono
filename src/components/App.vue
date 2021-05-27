@@ -145,13 +145,13 @@ export default defineComponent({
     },
     saveWorkouts() {
       // Remove new status from all workout's steps
-      const workouts = this.workouts.map((workout: Workout) => {
-        workout.steps = workout.steps.map((step) => {
-          step.isNew = false
-          return step
-        })
-        return workout
-      })
+      const workouts = this.workouts.map((w: Workout) => ({
+        ...w,
+        step: w.steps.map((s: Step) => ({
+          ...s,
+          isNew: false,
+        })),
+      }))
       // Save all workouts on local storage
       localStorage.setItem('workouts', JSON.stringify(workouts))
     },

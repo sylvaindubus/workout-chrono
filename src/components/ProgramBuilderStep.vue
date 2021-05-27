@@ -137,7 +137,11 @@ export default defineComponent({
           })
           break
         case 'type':
-          this.$emit('update', this.step.id, { [name]: value })
+          this.$emit('update', this.step.id, {
+            [name]: value,
+            // Keep the step name only if the step is an exercise
+            name: value === StepType.Exercise ? this.step.name : '',
+          })
           break
         case 'stepName':
           this.$emit('update', this.step.id, { name: value })
