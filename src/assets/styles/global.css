@@ -21,12 +21,11 @@ body {
 select,
 input {
   border: none;
-  height: 48px;
-  padding: 0 12px;
+  height: 40px;
+  padding: 0 10px;
   border-radius: 4px;
   border: 1px solid #d1d8e0;
   background-color: #fafcfd;
-  font-size: 1.25rem;
 }
 button {
   display: inline-flex;

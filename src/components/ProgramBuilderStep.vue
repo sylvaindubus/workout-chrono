@@ -204,7 +204,7 @@ export default defineComponent({
 .typeSelect,
 .nameInput {
   width: 180px;
-  margin: 6px 0;
+  margin: 4px 0;
 
   @media (min-width: 425px) {
     width: 240px;

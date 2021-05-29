@@ -67,9 +67,14 @@ export default defineComponent({
       workouts = [this.getNewWorkout()]
     }
 
+    let selectedId = localStorage.getItem('selectedWorkoutId') as string
+    if (!workouts.find((w: Workout) => w.id === selectedId)) {
+      selectedId = workouts[0].id
+    }
+
     return {
       workouts,
-      selectedId: workouts[0].id,
+      selectedId,
       isAsideVisible: false,
     }
   },
@@ -88,6 +93,7 @@ export default defineComponent({
     },
     selectWorkout(id: string) {
       this.selectedId = id
+      localStorage.setItem('selectedWorkoutId', id)
     },
     deleteWorkout() {
       const workout = this.fetchWorkoutInList(this.selectedId)
@@ -95,6 +101,7 @@ export default defineComponent({
 
       this.removeWorkoutInList(workout)
       this.selectedId = this.workouts[0].id
+      localStorage.setItem('selectedWorkoutId', this.selectedId)
     },
     addStep() {
       const workout = this.fetchWorkoutInList(this.selectedId)
@@ -147,7 +154,7 @@ export default defineComponent({
       // Remove new status from all workout's steps
       const workouts = this.workouts.map((w: Workout) => ({
         ...w,
-        step: w.steps.map((s: Step) => ({
+        steps: w.steps.map((s: Step) => ({
           ...s,
           isNew: false,
         })),
@@ -208,8 +215,8 @@ export default defineComponent({
       handler: function () {
         // Clear the previous timeout (if any)
         clearTimeout(saveTimeout)
-        // Save the workout after some seconds without changes
-        saveTimeout = setTimeout(this.saveWorkouts, 2000)
+        // Save the workout after some time without changes
+        saveTimeout = setTimeout(this.saveWorkouts, 500)
       },
       deep: true,
     },
