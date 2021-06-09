@@ -101,13 +101,18 @@ export default defineComponent({
       onElapsingUpdate: this.handleElapsingUpdate as (v: boolean) => void,
     })
 
+    const countdown = new Audio('countdown.mp3')
+    countdown.addEventListener('ended', function () {
+      this.currentTime = 0
+    })
+
     return {
       time: 0,
       stepIndex: -1,
       program: program,
       programState: ProgramState.Stopped,
       ProgramState: ProgramState,
-      countdown: new Audio('countdown.mp3'),
+      countdown: countdown,
     }
   },
   watch: {
