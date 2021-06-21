@@ -2,7 +2,7 @@
 
 Just a simple web app to prepare your own workout and get shit done!
 
-The app is currently living [here](https://workout-chrono.vercel.app/).
+The app is currently living [here](https://workout-chrono.app).
 
 ## 🗺 Road-map
 
