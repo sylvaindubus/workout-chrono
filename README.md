@@ -10,10 +10,10 @@ The app is currently living [here](https://workout-chrono.vercel.app/).
 - ~~Add a preview of the next step before time's up~~
 - ~~Make clear that you can add a step without a duration~~
 - ~~Add some sounds during the last 5 seconds of a step~~
+- ~~Add a presentation screen~~
 - Find a better name
 - Improve icon management
 - Make things a bit prettier, add smooth animations and a cool mascot
-- Add a presentation screen
 - Improve progress bar features
 - Support drag-and-drop on mobile
 

@@ -1,11 +1,16 @@
 <template>
-  <main :class="{ isFull: !isAsideVisible }">
+  <main :class="{ isFull: visibleSection === sectionTypes.Main }">
     <program-runner :workout="workout" />
-    <button class="toggleButton" @click="toggleAside" v-if="!isAsideVisible" aria-label="Open aside">
-      <icon width="28" height="28"><icon-dumbbell /></icon>
-    </button>
+    <div class="buttons">
+      <button class="button" @click="showWorkout" aria-label="Show the workout program">
+        <icon width="28" height="28"><icon-dumbbell /></icon>
+      </button>
+      <button class="button" @click="showAbout" aria-label="Show the about section">
+        <icon width="28" height="28"><icon-question /></icon>
+      </button>
+    </div>
   </main>
-  <aside :class="{ isVisible: isAsideVisible }">
+  <aside :class="{ isVisible: visibleSection !== sectionTypes.Main }">
     <workout-manager
       :workout="workout"
       :workouts="workouts"
@@ -13,6 +18,7 @@
       @rename-workout="renameWorkout"
       @select-workout="selectWorkout"
       @delete-workout="deleteWorkout"
+      v-if="visibleSection === sectionTypes.Workout"
     />
     <program-builder
       :workout="workout"
@@ -21,10 +27,14 @@
       @clone-step="cloneStep"
       @delete-step="deleteStep"
       @move-step="moveStep"
+      v-if="visibleSection === sectionTypes.Workout"
     />
-    <button class="toggleButton" @click="toggleAside" v-if="isAsideVisible" aria-label="Close aside">
-      <icon width="28" height="28"><icon-close /></icon>
-    </button>
+    <about v-if="visibleSection === sectionTypes.About" />
+    <div class="buttons">
+      <button class="button" @click="hideAside" aria-label="Close aside">
+        <icon width="28" height="28"><icon-close /></icon>
+      </button>
+    </div>
   </aside>
 </template>
 
@@ -33,9 +43,11 @@ import { defineComponent } from 'vue'
 import ProgramBuilder from './ProgramBuilder.vue'
 import ProgramRunner from './ProgramRunner.vue'
 import WorkoutManager from './WorkoutManager.vue'
+import About from './About.vue'
 import Icon from './icons/Icon.vue'
 import IconDumbbell from './icons/IconDumbbell.vue'
 import IconClose from './icons/IconClose.vue'
+import IconQuestion from './icons/IconQuestion.vue'
 import Step from '../types/step'
 import Workout from '../types/workout'
 import StepType from '../types/stepType'
@@ -43,15 +55,23 @@ import generateId from '../helpers/generateId'
 
 let saveTimeout: number
 
+enum Section {
+  Main,
+  Workout,
+  About,
+}
+
 export default defineComponent({
   name: 'App',
   components: {
     ProgramBuilder,
     ProgramRunner,
     WorkoutManager,
+    About,
     Icon,
     IconDumbbell,
     IconClose,
+    IconQuestion,
   },
   data() {
     // Temporary code to adapt from previous way of storing data
@@ -75,7 +95,8 @@ export default defineComponent({
     return {
       workouts,
       selectedId,
-      isAsideVisible: false,
+      sectionTypes: Section,
+      visibleSection: Section.Main,
     }
   },
   methods: {
@@ -168,8 +189,14 @@ export default defineComponent({
       }
       return JSON.parse(localStorage.getItem('workouts') || '[]')
     },
-    toggleAside() {
-      this.isAsideVisible = !this.isAsideVisible
+    showWorkout() {
+      this.visibleSection = Section.Workout
+    },
+    showAbout() {
+      this.visibleSection = Section.About
+    },
+    hideAside() {
+      this.visibleSection = Section.Main
     },
     fetchWorkoutInList(id: string): Workout | undefined {
       return this.workouts.find((w: Workout) => w.id === id)
@@ -224,7 +251,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="postcss">
+<style lang="postcss" scoped>
 main {
   position: relative;
   width: 100%;
@@ -259,10 +286,15 @@ aside {
     transform: translateX(0px);
   }
 }
-.toggleButton {
+.buttons {
   position: absolute;
   right: 18px;
   top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.button {
   width: 48px;
   height: 48px;
   color: #fff;
