@@ -152,7 +152,6 @@ export default defineComponent({
   height: 48px;
   margin-bottom: 18px;
   font-size: 1.75rem;
-  font-weight: 700;
   border: none;
   background: none;
   color: inherit;
@@ -166,7 +165,6 @@ export default defineComponent({
 .question {
   margin-bottom: 12px;
   font-size: 1.25rem;
-  font-weight: 700;
 }
 .nameInput {
   border: none;
@@ -178,7 +176,6 @@ export default defineComponent({
   border-radius: 4px;
   border: 2px solid #ebebeb;
   background-color: #fff;
-  font-weight: 700;
 }
 .iconBeforeLabel {
   margin-right: 6px;
@@ -195,7 +192,6 @@ export default defineComponent({
     line-height: 48px;
     border-top: 2px solid #ebebeb;
     font-size: 1.25rem;
-    font-weight: 700;
     cursor: pointer;
 
     &:first-child {

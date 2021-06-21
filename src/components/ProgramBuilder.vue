@@ -120,7 +120,6 @@ export default defineComponent({
 .title {
   margin: 12px 0;
   font-size: 2rem;
-  font-weight: 700;
 }
 .dropzone {
   height: 18px;

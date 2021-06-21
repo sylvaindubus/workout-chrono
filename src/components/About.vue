@@ -19,7 +19,6 @@
 <style lang="postcss" scoped>
 h1 {
   font-size: 1.75rem;
-  font-weight: 700;
   line-height: 1.75;
   margin-bottom: 1em;
 }
@@ -31,7 +30,6 @@ ul {
 p,
 li {
   font-size: 1.25rem;
-  font-weight: 700;
 }
 p {
   margin-bottom: 1em;

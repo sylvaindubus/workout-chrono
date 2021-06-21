@@ -192,7 +192,6 @@ export default defineComponent({
 }
 .inner {
   width: calc(100% - 52px);
-  font-weight: 700;
 }
 .time {
   margin-top: 0.5em;

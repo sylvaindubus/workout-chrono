@@ -12,7 +12,6 @@
   color: #000;
   font-family: inherit;
   font-size: 1rem;
-  font-weight: 700;
   text-transform: uppercase;
   box-shadow: #ebebeb 0px 6px 0px;
 }

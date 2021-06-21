@@ -287,7 +287,6 @@ export default defineComponent({
   width: 240px;
   height: 240px;
   background: transparent;
-  font-weight: 700;
   color: #4b6584;
   text-transform: uppercase;
 
