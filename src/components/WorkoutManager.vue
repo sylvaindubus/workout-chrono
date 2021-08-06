@@ -149,12 +149,18 @@ export default defineComponent({
 .switchButton {
   display: flex;
   max-width: calc(100% - 60px);
-  height: 48px;
-  margin-bottom: 18px;
+  min-height: 48px;
+  margin-bottom: 12px;
   font-size: 1.75rem;
+  text-align: left;
+  align-items: flex-start;
   border: none;
   background: none;
   color: inherit;
+
+  & .icon {
+    margin-right: 6px;
+  }
 }
 .icon {
   transition: transform 0.2s ease;
@@ -168,7 +174,7 @@ export default defineComponent({
 }
 .nameInput {
   border: none;
-  width: 300px;
+  width: 200px;
   max-width: 100%;
   height: 48px;
   margin: 0 6px 12px 0;
@@ -176,6 +182,11 @@ export default defineComponent({
   border-radius: 4px;
   border: 2px solid #ebebeb;
   background-color: #fff;
+  font-size: 1.25rem;
+
+  @media (min-width: 425px) {
+    width: 300px;
+  }
 }
 .iconBeforeLabel {
   margin-right: 6px;
