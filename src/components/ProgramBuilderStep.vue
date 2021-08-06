@@ -45,7 +45,7 @@
       <p v-if="minutes > 0 || seconds > 0" class="time">{{ minutes }}:{{ seconds }}</p>
       <p v-else class="noTimeLimitInfo">No timer</p>
     </div>
-    <button class="editButton" @click="toggleEdit" :aria-label="isEditing ? 'Stop editing step' : 'Edit step'">
+    <button class="editButton" @click="handleStepEdit" :aria-label="isEditing ? 'Stop editing step' : 'Edit step'">
       <icon width="24" height="24">
         <icon-check v-if="isEditing" />
         <icon-edit v-else />}
@@ -95,10 +95,10 @@ export default defineComponent({
     step: { type: Object, required: true },
     isFirst: Boolean,
     isLast: Boolean,
+    isEditing: Boolean,
   },
   data() {
     return {
-      isEditing: this.step.isNew,
       StepType,
     }
   },
@@ -120,8 +120,8 @@ export default defineComponent({
     },
   },
   methods: {
-    toggleEdit() {
-      this.isEditing = !this.isEditing
+    handleStepEdit() {
+      this.$emit('startEditing', this.step.id)
     },
     handleUpdate(event: InputEvent) {
       const { name, value } = event.currentTarget as HTMLInputElement

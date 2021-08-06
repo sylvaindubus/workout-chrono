@@ -124,16 +124,15 @@ export default defineComponent({
       this.selectedId = this.workouts[0].id
       localStorage.setItem('selectedWorkoutId', this.selectedId)
     },
-    addStep() {
+    addStep(newId: string) {
       const workout = this.fetchWorkoutInList(this.selectedId)
       if (!workout) return
 
       workout.steps.push({
-        id: generateId(),
+        id: newId,
         type: StepType.Exercise,
         name: '',
         duration: 40,
-        isNew: true,
       })
       this.updateWorkoutInList(workout)
     },
@@ -144,16 +143,15 @@ export default defineComponent({
       workout.steps[index] = step
       this.updateWorkoutInList(workout)
     },
-    cloneStep(index: number) {
+    cloneStep(index: number, newId: string) {
       const workout = this.fetchWorkoutInList(this.selectedId)
       if (!workout) return
 
       const clone = {
         ...workout.steps[index],
-        id: generateId(),
-        isNew: true,
+        id: newId,
       }
-      workout.steps.splice(index, 0, clone)
+      workout.steps.splice(index + 1, 0, clone)
       this.updateWorkoutInList(workout)
     },
     deleteStep(index: number) {
@@ -172,16 +170,8 @@ export default defineComponent({
       this.updateWorkoutInList(workout)
     },
     saveWorkouts() {
-      // Remove new status from all workout's steps
-      const workouts = this.workouts.map((w: Workout) => ({
-        ...w,
-        steps: w.steps.map((s: Step) => ({
-          ...s,
-          isNew: false,
-        })),
-      }))
       // Save all workouts on local storage
-      localStorage.setItem('workouts', JSON.stringify(workouts))
+      localStorage.setItem('workouts', JSON.stringify(this.workouts))
     },
     loadWorkouts(): Workout[] | null {
       if (!localStorage.getItem('workouts')) {
@@ -216,16 +206,27 @@ export default defineComponent({
         id: generateId(),
         name: 'My workout',
         steps: [
-          { id: generateId(), type: StepType.WarmUp, duration: 40, isNew: false },
+          {
+            id: generateId(),
+            type: StepType.WarmUp,
+            duration: 40,
+          },
           {
             id: generateId(),
             type: StepType.Exercise,
             name: 'Push-ups',
             duration: 60,
-            isNew: false,
           },
-          { id: generateId(), type: StepType.Rest, duration: 20, isNew: false },
-          { id: generateId(), type: StepType.Stretching, duration: 60, isNew: false },
+          {
+            id: generateId(),
+            type: StepType.Rest,
+            duration: 20,
+          },
+          {
+            id: generateId(),
+            type: StepType.Stretching,
+            duration: 60,
+          },
         ],
         createdAt: new Date(),
         updatedAt: new Date(),

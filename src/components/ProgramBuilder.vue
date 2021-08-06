@@ -13,6 +13,8 @@
           :step="step"
           :isFirst="index === 0"
           :isLast="index === workout.steps.length - 1"
+          :isEditing="step.id === editingStep"
+          @startEditing="handleStepStartEditing"
           @update="handleStepUpdate"
           @clone="handleStepClone"
           @delete="handleStepDelete"
@@ -40,6 +42,7 @@ import ProgramBuilderStep from './ProgramBuilderStep.vue'
 import RoundedButton from './RoundedButton.vue'
 import Icon from './icons/Icon.vue'
 import IconAddCircle from './icons/IconAddCircle.vue'
+import generateId from '@/helpers/generateId'
 
 export default defineComponent({
   name: 'ProgramBuilder',
@@ -52,9 +55,19 @@ export default defineComponent({
   props: {
     workout: { type: Object as () => Workout, required: true },
   },
+  data() {
+    return {
+      editingStep: '',
+    }
+  },
   methods: {
     handleClickOnAddButton() {
-      this.$emit('add-step')
+      const newId = generateId()
+      this.$emit('add-step', newId)
+      this.editingStep = newId
+    },
+    handleStepStartEditing(id: string) {
+      this.editingStep = this.editingStep !== id ? id : ''
     },
     handleStepUpdate(id: string, data: Step) {
       const index = this.workout.steps.findIndex((step) => step.id === id)
@@ -67,7 +80,10 @@ export default defineComponent({
     handleStepClone(id: string) {
       const index = this.workout.steps.findIndex((step) => step.id === id)
       if (index === -1) return
-      this.$emit('clone-step', index)
+
+      const newId = generateId()
+      this.$emit('clone-step', index, newId)
+      this.editingStep = newId
     },
     handleStepDelete(id: string) {
       const index = this.workout.steps.findIndex((step) => step.id === id)

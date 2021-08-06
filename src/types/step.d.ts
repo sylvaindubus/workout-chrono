@@ -5,7 +5,6 @@ type Step = {
   type: StepType;
   name?: string;
   duration: number;
-  isNew: boolean;
 }
 
 export default Step
