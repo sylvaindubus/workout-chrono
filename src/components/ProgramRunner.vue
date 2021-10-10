@@ -92,6 +92,7 @@ export default defineComponent({
   },
   props: {
     workout: { type: Object as () => Workout, required: true },
+    isMute: { type: Boolean },
   },
   data() {
     const program = new Program(this.workout.steps, {
@@ -102,6 +103,7 @@ export default defineComponent({
     })
 
     const countdown = new Audio('countdown.mp3')
+    countdown.muted = this.isMute
     countdown.addEventListener('ended', function () {
       this.currentTime = 0
     })
@@ -128,6 +130,11 @@ export default defineComponent({
         })
       },
       deep: true,
+    },
+    isMute: {
+      handler: function (isMute: boolean) {
+        this.countdown.muted = isMute
+      },
     },
   },
   computed: {
@@ -182,6 +189,7 @@ export default defineComponent({
     },
     handleElapsingUpdate(elapsing: boolean) {
       if (elapsing) {
+        this.countdown.currentTime = Math.max(0, this.countdown.duration - this.time)
         this.countdown.play()
       }
     },
@@ -194,6 +202,7 @@ export default defineComponent({
       } else if (this.programState === ProgramState.Paused) {
         this.program.play()
         if (this.countdown.paused && this.countdown.currentTime > 0) {
+          this.countdown.currentTime = Math.max(0, this.countdown.duration - this.time)
           this.countdown.play()
         }
       } else {

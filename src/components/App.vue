@@ -1,9 +1,17 @@
 <template>
   <main :class="{ isFull: visibleSection === sectionTypes.Main }">
-    <program-runner :workout="workout" />
+    <program-runner :workout="workout" :isMute="isMute" />
     <div class="buttons">
       <button class="button" @click="showWorkout" aria-label="Show the workout program">
         <icon width="28" height="28"><icon-dumbbell /></icon>
+      </button>
+      <button class="button" @click="toggleMute" aria-label="Mute/unmute the sound">
+        <icon width="28" height="28" v-if="isMute">
+          <icon-mute />
+        </icon>
+        <icon width="28" height="28" v-else>
+          <icon-sound />
+        </icon>
       </button>
       <button class="button" @click="showAbout" aria-label="Show the about section">
         <icon width="28" height="28"><icon-question /></icon>
@@ -47,6 +55,8 @@ import About from './About.vue'
 import Icon from './icons/Icon.vue'
 import IconDumbbell from './icons/IconDumbbell.vue'
 import IconClose from './icons/IconClose.vue'
+import IconMute from './icons/IconMute.vue'
+import IconSound from './icons/IconSound.vue'
 import IconQuestion from './icons/IconQuestion.vue'
 import Step from '../types/step'
 import Workout from '../types/workout'
@@ -71,6 +81,8 @@ export default defineComponent({
     Icon,
     IconDumbbell,
     IconClose,
+    IconMute,
+    IconSound,
     IconQuestion,
   },
   data() {
@@ -92,11 +104,14 @@ export default defineComponent({
       selectedId = workouts[0].id
     }
 
+    const isMute = localStorage.getItem('isMute') && localStorage.getItem('isMute') === '1'
+
     return {
       workouts,
       selectedId,
       sectionTypes: Section,
       visibleSection: Section.Main,
+      isMute,
     }
   },
   methods: {
@@ -181,6 +196,10 @@ export default defineComponent({
     },
     showWorkout() {
       this.visibleSection = Section.Workout
+    },
+    toggleMute() {
+      this.isMute = !this.isMute
+      localStorage.setItem('isMute', this.isMute ? '1' : '0')
     },
     showAbout() {
       this.visibleSection = Section.About
