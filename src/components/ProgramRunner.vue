@@ -6,6 +6,14 @@
     @keyup.space="handleClickOnStartPause"
     tabindex="0"
   >
+    <div class="block totalTime">
+      <program-runner-timer
+        v-if="programState === ProgramState.Running || programState === ProgramState.Paused"
+        :time="program.totalTime"
+        isSmall
+        hideCentiseconds
+      />
+    </div>
     <div class="block main">
       <div v-if="programState === ProgramState.Running || programState === ProgramState.Paused">
         <p class="title">{{ title }}</p>
@@ -274,7 +282,9 @@ export default defineComponent({
   position: absolute;
   padding: 18px;
   font-size: 2rem;
-
+  &.totalTime {
+    top: 80px;
+  }
   &.main {
     top: 50%;
     transform: translateY(-50%);

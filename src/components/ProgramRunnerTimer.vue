@@ -1,9 +1,9 @@
 <template>
-  <section class="programRunnerTimer">
+  <section :class="['programRunnerTimer', isSmall ? 'isSmall' : '']">
     <span v-if="hours !== '00'">{{ hours }}:</span>
     <span>{{ minutes }}:</span>
     <span>{{ seconds }}</span>
-    <span class="small">{{ centiseconds }}</span>
+    <span v-if="!hideCentiseconds" class="centiseconds">{{ centiseconds }}</span>
   </section>
 </template>
 
@@ -15,6 +15,8 @@ export default defineComponent({
   name: 'ProgramRunnerTimer',
   props: {
     time: { type: Number, required: true },
+    isSmall: { type: Boolean, default: false },
+    hideCentiseconds: { type: Boolean, default: false },
   },
   computed: {
     hours(): string {
@@ -33,11 +35,15 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .programRunnerTimer {
   font-size: 5rem;
+
+  &.isSmall {
+    font-size: 2rem;
+  }
 }
-.small {
+.centiseconds {
   font-size: 0.6em;
 }
 </style>
