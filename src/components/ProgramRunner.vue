@@ -4,19 +4,21 @@
     @keyup.left="handleClickOnPrevious"
     @keyup.right="handleClickOnNext"
     @keyup.space="handleClickOnStartPause"
+    @touchstart="handleTouchStart"
+    @touchend="handleTouchEnd"
     tabindex="0"
   >
-    <div class="block totalTime" v-if="programState === ProgramState.Running || programState === ProgramState.Paused">
+    <div class="block totalTime" v-if="isStarted">
       <label class="totalTimeLabel">Total</label>
       <program-runner-timer :time="program.totalTime" isSmall hideCentiseconds />
     </div>
     <div class="block main">
-      <div v-if="programState === ProgramState.Running || programState === ProgramState.Paused">
+      <div v-if="isStarted">
         <p class="title">{{ title }}</p>
         <program-runner-timer :time="time" />
         <program-runner-next-step :step="nextStep" :isVisible="isNextStepVisible" />
       </div>
-      <div v-else-if="programState === ProgramState.Finished">
+      <div v-else-if="isFinished">
         <p class="title">Well done!</p>
         <p class="title">You did it in:</p>
         <program-runner-timer :time="program.totalTime" />
@@ -29,27 +31,19 @@
         </button>
       </div>
     </div>
-    <div class="block buttons" v-if="programState === ProgramState.Running || programState === ProgramState.Paused">
+    <div class="block buttons" v-if="isStarted">
       <rounded-button @click="handleClickOnPrevious" aria-label="Previous step">
         <icon width="24" height="24"><icon-previous /></icon>
       </rounded-button>
-      <rounded-button
-        @click="handleClickOnStartPause"
-        :aria-label="programState === ProgramState.Running ? 'Pause' : 'Start'"
-      >
-        <icon width="24" height="24" v-if="programState === ProgramState.Running"><icon-pause /></icon>
+      <rounded-button @click="handleClickOnStartPause" :aria-label="isRunning ? 'Pause' : 'Start'">
+        <icon width="24" height="24" v-if="isRunning"><icon-pause /></icon>
         <icon width="24" height="24" v-else><icon-play /></icon>
       </rounded-button>
       <rounded-button @click="handleClickOnNext" aria-label="Next step">
         <icon width="24" height="24"><icon-next /></icon>
       </rounded-button>
     </div>
-    <rounded-button
-      class="stopButton"
-      @click="handleClickOnStop"
-      v-if="programState === ProgramState.Paused"
-      aria-label="Stop workout"
-    >
+    <rounded-button class="stopButton" @click="handleClickOnStop" v-if="isPaused" aria-label="Stop workout">
       <icon width="24" height="24"><icon-stop /></icon>
       <span>Stop</span>
     </rounded-button>
@@ -75,9 +69,18 @@ import IconPlay from './icons/IconPlay.vue'
 import IconPause from './icons/IconPause.vue'
 import IconStop from './icons/IconStop.vue'
 import StepType from '@/types/stepType'
-/* global WakeLockSentinel */
 
+/* global WakeLockSentinel */
 let wakeLock: WakeLockSentinel | null
+
+type Data = {
+  time: number
+  stepIndex: number
+  program: Program
+  programState: ProgramState
+  countdown: HTMLAudioElement
+  touchStart: Touch | null
+}
 
 export default defineComponent({
   name: 'ProgramRunner',
@@ -98,7 +101,7 @@ export default defineComponent({
     workout: { type: Object as () => Workout, required: true },
     isMute: { type: Boolean },
   },
-  data() {
+  data(): Data {
     const program = new Program(this.workout.steps, {
       onStateUpdate: this.handleStateUpdate as (v: number) => void,
       onTimeUpdate: this.handleTimeUpdate as (v: number) => void,
@@ -117,8 +120,8 @@ export default defineComponent({
       stepIndex: -1,
       program: program,
       programState: ProgramState.Stopped,
-      ProgramState: ProgramState,
       countdown: countdown,
+      touchStart: null,
     }
   },
   watch: {
@@ -174,6 +177,18 @@ export default defineComponent({
         ((this.currentStep.duration > 0 && this.time < 20000) || this.currentStep.duration === 0)
       )
     },
+    isStarted(): boolean {
+      return this.programState === ProgramState.Running || this.programState === ProgramState.Paused
+    },
+    isRunning(): boolean {
+      return this.programState === ProgramState.Running
+    },
+    isPaused(): boolean {
+      return this.programState === ProgramState.Paused
+    },
+    isFinished(): boolean {
+      return this.programState === ProgramState.Finished
+    },
   },
   methods: {
     handleTimeUpdate(time: number) {
@@ -224,6 +239,23 @@ export default defineComponent({
     handleClickOnNext() {
       this.stopCountdown()
       this.program.nextStep()
+    },
+    handleTouchStart(e: TouchEvent) {
+      this.touchStart = e.changedTouches[0]
+    },
+    handleTouchEnd(e: TouchEvent) {
+      if (!this.touchStart || !this.isStarted) return
+
+      const threshold = 100
+      const touchEnd = e.changedTouches[0]
+
+      if (touchEnd.clientX < this.touchStart.clientX - threshold) {
+        this.stopCountdown()
+        this.program.nextStep()
+      } else if (touchEnd.clientX > this.touchStart.clientX + threshold) {
+        this.stopCountdown()
+        this.program.previousStep()
+      }
     },
     stopCountdown() {
       if (!this.countdown.paused) {
