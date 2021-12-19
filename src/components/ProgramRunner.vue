@@ -6,13 +6,9 @@
     @keyup.space="handleClickOnStartPause"
     tabindex="0"
   >
-    <div class="block totalTime">
-      <program-runner-timer
-        v-if="programState === ProgramState.Running || programState === ProgramState.Paused"
-        :time="program.totalTime"
-        isSmall
-        hideCentiseconds
-      />
+    <div class="block totalTime" v-if="programState === ProgramState.Running || programState === ProgramState.Paused">
+      <label class="totalTimeLabel">Total</label>
+      <program-runner-timer :time="program.totalTime" isSmall hideCentiseconds />
     </div>
     <div class="block main">
       <div v-if="programState === ProgramState.Running || programState === ProgramState.Paused">
@@ -300,6 +296,9 @@ export default defineComponent({
 }
 .title {
   margin-bottom: 12px;
+}
+.totalTimeLabel {
+  font-size: 1.25rem;
 }
 .bigPlayButton {
   flex-direction: column;
