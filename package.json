@@ -3,7 +3,7 @@
   "description": "The simplest app ever to time your own workout!",
   "repository": "github:sylvaindubus/workout-chrono",
   "license": "MIT License",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
