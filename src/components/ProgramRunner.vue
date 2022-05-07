@@ -1,6 +1,6 @@
 <template>
   <section
-    :class="classes"
+    :class="['programRunner', themeClass]"
     @keyup.left="handleClickOnPrevious"
     @keyup.right="handleClickOnNext"
     @keyup.space="handleClickOnStartPause"
@@ -8,15 +8,14 @@
     @touchend="handleTouchEnd"
     tabindex="0"
   >
-    <div class="block totalTime" v-if="isStarted">
-      <label class="totalTimeLabel">Total</label>
+    <div class="block expanded" v-if="isStarted">
+      <label class="label">Total</label>
       <program-runner-timer :time="program.totalTime" isSmall hideCentiseconds />
     </div>
-    <div class="block main">
+    <div :class="['block', 'main', themeClass]">
       <div v-if="isStarted">
         <p class="title">{{ title }}</p>
         <program-runner-timer :time="time" />
-        <program-runner-next-step :step="nextStep" :isVisible="isNextStepVisible" />
       </div>
       <div v-else-if="isFinished">
         <p class="title">Well done!</p>
@@ -31,23 +30,28 @@
         </button>
       </div>
     </div>
-    <div class="block buttons" v-if="isStarted">
-      <rounded-button @click="handleClickOnPrevious" aria-label="Previous step">
-        <icon width="24" height="24"><icon-previous /></icon>
-      </rounded-button>
-      <rounded-button @click="handleClickOnStartPause" :aria-label="isRunning ? 'Pause' : 'Start'">
-        <icon width="24" height="24" v-if="isRunning"><icon-pause /></icon>
-        <icon width="24" height="24" v-else><icon-play /></icon>
-      </rounded-button>
-      <rounded-button @click="handleClickOnNext" aria-label="Next step">
-        <icon width="24" height="24"><icon-next /></icon>
-      </rounded-button>
+    <div class="block expanded" v-if="isStarted">
+      <program-runner-next-step :step="nextStep" :isVisible="isNextStepVisible" />
     </div>
+    <footer class="block" v-if="isStarted">
+      <div class="buttons">
+        <rounded-button @click="handleClickOnPrevious" aria-label="Previous step">
+          <icon width="24" height="24"><icon-previous /></icon>
+        </rounded-button>
+        <rounded-button @click="handleClickOnStartPause" :aria-label="isRunning ? 'Pause' : 'Start'">
+          <icon width="24" height="24" v-if="isRunning"><icon-pause /></icon>
+          <icon width="24" height="24" v-else><icon-play /></icon>
+        </rounded-button>
+        <rounded-button @click="handleClickOnNext" aria-label="Next step">
+          <icon width="24" height="24"><icon-next /></icon>
+        </rounded-button>
+      </div>
+      <program-runner-progress :steps="workout.steps" :currentStep="currentStep" />
+    </footer>
     <rounded-button class="stopButton" @click="handleClickOnStop" v-if="isPaused" aria-label="Stop workout">
       <icon width="24" height="24"><icon-stop /></icon>
       <span>Stop</span>
     </rounded-button>
-    <program-runner-progress :steps="workout.steps" :currentStep="currentStep" />
   </section>
 </template>
 
@@ -68,7 +72,6 @@ import IconNext from './icons/IconNext.vue'
 import IconPlay from './icons/IconPlay.vue'
 import IconPause from './icons/IconPause.vue'
 import IconStop from './icons/IconStop.vue'
-import StepType from '@/types/stepType'
 
 /* global WakeLockSentinel */
 let wakeLock: WakeLockSentinel | null
@@ -145,13 +148,13 @@ export default defineComponent({
     },
   },
   computed: {
-    classes(): Array<string> {
-      const classes = ['programRunner']
+    themeClass(): string {
+      // const classes = []
       const step = this.workout.steps[this.stepIndex]
       if (step) {
-        classes.push(`${step.type.toLowerCase()}Color`)
+        return `${step.type.toLowerCase()}Color`
       }
-      return classes
+      return ''
     },
     title(): string {
       const step = this.workout.steps[this.stepIndex]
@@ -169,13 +172,7 @@ export default defineComponent({
     },
     isNextStepVisible(): boolean {
       // The next step should be visible if this is a exercise step
-      // and if the current step is almost done (less than 20 seconds left)
-      return (
-        this.nextStep !== null &&
-        this.nextStep.type === StepType.Exercise &&
-        this.currentStep !== null &&
-        ((this.currentStep.duration > 0 && this.time < 20000) || this.currentStep.duration === 0)
-      )
+      return this.nextStep !== null && this.currentStep !== null
     },
     isStarted(): boolean {
       return this.programState === ProgramState.Running || this.programState === ProgramState.Paused
@@ -264,7 +261,9 @@ export default defineComponent({
       this.countdown.currentTime = 0
     },
     async requestWakeLock() {
-      wakeLock = await navigator.wakeLock.request('screen')
+      try {
+        wakeLock = await navigator.wakeLock.request('screen')
+      } catch {}
     },
     async releaseWakeLock() {
       if (!wakeLock) return
@@ -282,7 +281,6 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
   height: 100%;
   background-color: #f1f1f1;
   transition: background-color ease 0.75s, color ease 0.75s;
@@ -307,30 +305,54 @@ export default defineComponent({
   }
 }
 .block {
-  position: absolute;
-  padding: 18px;
-  font-size: 2rem;
-  &.totalTime {
-    top: 80px;
-  }
-  &.main {
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  &.buttons {
-    width: 100%;
-    bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  font-size: 1.5rem;
 
-    & > * {
-      margin: 0 6px;
+  &.expanded,
+  &:only-child {
+    flex-grow: 1;
+  }
+
+  &.main {
+    padding: 32px;
+    transition: background-color ease 0.75s, color ease 0.75s;
+
+    &.warmupColor {
+      background-color: #f7b731;
+    }
+
+    &.exerciseColor {
+      background-color: #eb3b5a;
+      color: #fff;
+    }
+
+    &.restColor {
+      background-color: #2d98da;
+      color: #fff;
+    }
+
+    &.stretchingColor {
+      background-color: #20bf6b;
+      color: #fff;
     }
   }
+}
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 18px;
 }
 .title {
   margin-bottom: 12px;
 }
-.totalTimeLabel {
-  font-size: 1.25rem;
+.label {
+  display: block;
+  margin-bottom: 0.25em;
 }
 .bigPlayButton {
   flex-direction: column;

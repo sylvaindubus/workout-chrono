@@ -1,5 +1,6 @@
 <template>
   <section class="programBuilder">
+    <header class="header">My step list ({{ workout.steps.length }})</header>
     <ul class="list">
       <li v-for="(step, index) of workout.steps" :key="step.id">
         <div
@@ -133,6 +134,9 @@ export default defineComponent({
 </script>
 
 <style lang="postcss" scoped>
+.header {
+  font-size: 1.25rem;
+}
 .title {
   margin: 12px 0;
   font-size: 2rem;

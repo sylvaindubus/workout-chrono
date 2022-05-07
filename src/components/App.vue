@@ -26,7 +26,6 @@
       @rename-workout="renameWorkout"
       @select-workout="selectWorkout"
       @delete-workout="deleteWorkout"
-      v-if="visibleSection === sectionTypes.Workout"
     />
     <program-builder
       :workout="workout"
@@ -35,7 +34,6 @@
       @clone-step="cloneStep"
       @delete-step="deleteStep"
       @move-step="moveStep"
-      v-if="visibleSection === sectionTypes.Workout"
     />
     <about v-if="visibleSection === sectionTypes.About" />
     <div class="buttons">

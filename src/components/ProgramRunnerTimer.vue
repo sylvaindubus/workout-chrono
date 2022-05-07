@@ -40,7 +40,7 @@ export default defineComponent({
   font-size: 5rem;
 
   &.isSmall {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
 }
 .centiseconds {

@@ -49,10 +49,7 @@ export default defineComponent({
 
 <style lang="postcss" scoped>
 .programRunnerProgress {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
   overflow-y: hidden;
 }
 ul {
@@ -61,7 +58,7 @@ ul {
 }
 li {
   min-width: 3px;
-  height: 12px;
+  height: 6px;
 
   &.warmupColor {
     background-color: #f7b731;

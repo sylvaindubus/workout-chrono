@@ -12,6 +12,7 @@ body {
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: smooth;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: contain;
 }
 * {
   box-sizing: border-box;

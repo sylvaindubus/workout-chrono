@@ -1,7 +1,7 @@
 <template>
-  <div :class="classes">
+  <div :class="classes" v-if="step">
     <p class="label">Next step:</p>
-    <p>{{ step && step.name ? step.name : '' }}</p>
+    <p>{{ step.name ? step.name : step.type }}</p>
   </div>
 </template>
 
@@ -27,9 +27,9 @@ export default defineComponent({
 
 <style lang="postcss" scoped>
 .programRunnerNextStep {
+  padding: 24px;
   opacity: 0;
   visibility: hidden;
-  margin-top: 18px;
 
   &.isVisible {
     opacity: 1;

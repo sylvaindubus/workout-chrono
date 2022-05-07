@@ -191,6 +191,9 @@ export default defineComponent({
   }
 }
 .inner {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   width: calc(100% - 52px);
 }
 .time {
@@ -203,14 +206,13 @@ export default defineComponent({
 .typeSelect,
 .nameInput {
   width: 180px;
-  margin: 4px 0;
 
   @media (min-width: 425px) {
     width: 240px;
   }
 }
 .timeInput {
-  margin: 6px 0;
+  width: 70px;
   text-align: center;
 }
 .buttons {

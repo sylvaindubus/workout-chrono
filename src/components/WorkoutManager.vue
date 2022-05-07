@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="workoutManager">
     <button v-if="!isRenaming" class="switchButton" @click="toggleSelect" aria-label="Select another workout">
       <icon width="32" height="32" :class="['icon', isSelecting ? 'reverse' : '']">
         <icon-caret-down />
@@ -23,7 +23,7 @@
       </rounded-button>
       <rounded-button class="actionButton cancelColor" @click="cancelRenaming">
         <icon width="24" height="24" class="iconBeforeLabel"><icon-close /></icon>
-        <span>Forget it</span>
+        <span>Cancel</span>
       </rounded-button>
     </div>
     <div v-if="isDeleting">
@@ -34,7 +34,7 @@
       </rounded-button>
       <rounded-button class="actionButton cancelColor" @click="cancelDeleting">
         <icon width="24" height="24" class="iconBeforeLabel"><icon-close /></icon>
-        <span>Forget it</span>
+        <span>Cancel</span>
       </rounded-button>
     </div>
     <div v-if="!isSelecting && !isRenaming && !isDeleting">
@@ -135,6 +135,10 @@ export default defineComponent({
 </script>
 
 <style lang="postcss" scoped>
+.workoutManager {
+  margin-bottom: 24px;
+}
+
 .actionButton {
   margin: 0 12px 12px 0;
 
