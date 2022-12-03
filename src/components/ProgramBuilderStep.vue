@@ -42,7 +42,7 @@
     <div v-else class="inner">
       <p>{{ step.type }}</p>
       <p v-if="step.name">{{ step.name }}</p>
-      <p v-if="minutes > 0 || seconds > 0" class="time">{{ minutes }}:{{ seconds }}</p>
+      <p v-if="step.duration > 0" class="time">{{ minutes }}:{{ seconds }}</p>
       <p v-else class="noTimeLimitInfo">No timer</p>
     </div>
     <button class="editButton" @click="handleStepEdit" :aria-label="isEditing ? 'Stop editing step' : 'Edit step'">
@@ -70,6 +70,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import Step from '../types/step.d'
 import StepType from '../types/stepType'
 import { formatMinutes, formatSeconds } from '../helpers/formatters'
 import Icon from './icons/Icon.vue'
@@ -92,7 +93,7 @@ export default defineComponent({
     IconCheck,
   },
   props: {
-    step: { type: Object, required: true },
+    step: { type: Object as () => Step, required: true },
     isFirst: Boolean,
     isLast: Boolean,
     isEditing: Boolean,
@@ -123,7 +124,7 @@ export default defineComponent({
     handleStepEdit() {
       this.$emit('startEditing', this.step.id)
     },
-    handleUpdate(event: InputEvent) {
+    handleUpdate(event: Event) {
       const { name, value } = event.currentTarget as HTMLInputElement
       switch (name) {
         case 'minutes':

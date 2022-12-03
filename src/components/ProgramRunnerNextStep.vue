@@ -7,10 +7,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import Step from '../types/step.d'
 
 export default defineComponent({
   props: {
-    step: { type: Object, required: false },
+    step: { type: Object as () => Step, required: false },
     isVisible: Boolean,
   },
   computed: {

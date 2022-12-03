@@ -52,6 +52,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import Workout from '../types/workout.d'
 import RoundedButton from './RoundedButton.vue'
 import Icon from './icons/Icon.vue'
 import IconAddCircle from './icons/IconAddCircle.vue'
@@ -74,8 +75,8 @@ export default defineComponent({
     IconTrash,
   },
   props: {
-    workout: { type: Object, required: true },
-    workouts: { type: Array, required: true },
+    workout: { type: Object as () => Workout, required: true },
+    workouts: { type: Array as () => Workout[], required: true },
   },
   methods: {
     toggleSelect() {
@@ -113,7 +114,7 @@ export default defineComponent({
     cancelDeleting() {
       this.isDeleting = false
     },
-    handleNameUpdate(event: InputEvent) {
+    handleNameUpdate(event: Event) {
       const { value } = event.currentTarget as HTMLInputElement
       this.name = value
     },

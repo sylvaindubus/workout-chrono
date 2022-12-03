@@ -3,7 +3,7 @@
     <ul>
       <li
         v-for="step in steps"
-        :key="{ step }"
+        :key="step.id"
         :class="[step === currentStep ? 'current' : '', `${step.type.toLowerCase()}Color`]"
         :style="getElementStyle(step.duration)"
       ></li>

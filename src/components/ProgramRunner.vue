@@ -121,9 +121,9 @@ export default defineComponent({
     return {
       time: 0,
       stepIndex: -1,
-      program: program,
+      program,
       programState: ProgramState.Stopped,
-      countdown: countdown,
+      countdown,
       touchStart: null,
     }
   },
@@ -164,11 +164,11 @@ export default defineComponent({
         return ''
       }
     },
-    currentStep(): Step | null {
-      return this.workout.steps[this.stepIndex] || null
+    currentStep(): Step | undefined {
+      return this.workout.steps[this.stepIndex] || undefined
     },
-    nextStep(): Step | null {
-      return this.workout.steps[this.stepIndex + 1] || null
+    nextStep(): Step | undefined {
+      return this.workout.steps[this.stepIndex + 1] || undefined
     },
     isNextStepVisible(): boolean {
       // The next step should be visible if this is a exercise step

@@ -102,7 +102,7 @@ export default defineComponent({
       selectedId = workouts[0].id
     }
 
-    const isMute = localStorage.getItem('isMute') && localStorage.getItem('isMute') === '1'
+    const isMute = !!(localStorage.getItem('isMute') && localStorage.getItem('isMute') === '1')
 
     return {
       workouts,
@@ -251,8 +251,8 @@ export default defineComponent({
     },
   },
   computed: {
-    workout(): Workout | undefined {
-      return this.fetchWorkoutInList(this.selectedId)
+    workout(): Workout {
+      return this.fetchWorkoutInList(this.selectedId) ?? this.workouts[0]
     },
   },
   watch: {
