@@ -20,6 +20,7 @@
   </main>
   <aside :class="{ isVisible: visibleSection !== sectionTypes.Main }">
     <workout-manager
+      v-if="visibleSection === sectionTypes.Workout"
       :workout="workout"
       :workouts="workouts"
       @create-workout="createWorkout"
@@ -28,6 +29,7 @@
       @delete-workout="deleteWorkout"
     />
     <program-builder
+      v-if="visibleSection === sectionTypes.Workout"
       :workout="workout"
       @add-step="addStep"
       @update-step="updateStep"
