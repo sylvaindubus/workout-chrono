@@ -83,6 +83,12 @@ export default defineComponent({
     IconSound,
     IconQuestion,
   },
+  beforeMount() {
+    if (navigator.storage && navigator.storage.persist) {
+      // Try to make the local storage persistent, not sure it works though
+      navigator.storage.persist()
+    }
+  },
   data() {
     // Temporary code to adapt from previous way of storing data
     if (localStorage.getItem('workout') && !localStorage.getItem('workouts')) {
